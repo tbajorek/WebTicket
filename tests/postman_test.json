@@ -1,0 +1,152 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Authorization",
+		"_postman_id": "c18c6a9d-517c-b73e-ccb5-dbe7ab4d6073",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Incorrect login data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Log in operation has been finished unsuccessful\"] = jsonData.response === 0;",
+							"tests[\"Correct error login message - incorrect data\"] = jsonData.messages.error[0] === \"Podałeś błędne dane logowania\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:9080/WebTicket/api/auth",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"badPassword\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Positive login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"User id is correct\"] = jsonData.data.userId === 1;",
+							"tests[\"Log in operation has been finished successful\"] = jsonData.response === 1;",
+							"tests[\"Correct login message\"] = jsonData.messages.success[0] === \"Zostałeś zalogowany pomyślnie\";",
+							"",
+							"postman.setGlobalVariable(\"token\", jsonData.data.token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:9080/WebTicket/api/auth",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"qwerty\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Positive logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Log out operation has been finished successful\"] = jsonData.response === 1;",
+							"tests[\"Correct logout message\"] = jsonData.messages.success[0] === \"Zostałeś wylogowany pomyślnie\";",
+							"postman.clearGlobalVariable(\"token\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:9080/WebTicket/api/auth",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Token",
+						"value": "{{token}}",
+						"description": "Authorize token"
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Incorrect token - unauthorized",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Log in operation has been finished unsuccessful\"] = jsonData.response === 0;",
+							"tests[\"Correct error login message - incorrect data\"] = jsonData.messages.error[0] === \"Nie masz dostępu do tego zasobu\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:9080/WebTicket/api/auth",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Token",
+						"value": "blabla",
+						"description": "Bad token"
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

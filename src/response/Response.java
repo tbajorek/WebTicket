@@ -11,14 +11,18 @@ public class Response implements Serializable {
 	private HashMap<String, Object> data;
 	private HashMap<String, HashMap<String, Object>> view;
 	
-	public Response(Integer response) {
-		setResponse(response);
+	public Response() {
 		messages = new HashMap<String, ArrayList<String>>();
 		this.messages.put("error", new ArrayList<String>());
 		this.messages.put("warning", new ArrayList<String>());
 		this.messages.put("info", new ArrayList<String>());
 		this.messages.put("success", new ArrayList<String>());
 		this.data = new HashMap<String, Object>();
+	}
+	
+	public Response(int response) {
+		this();
+		setResponse(response);
 	}
 
 	/**

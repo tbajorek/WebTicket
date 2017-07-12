@@ -5,18 +5,29 @@ import java.security.SecureRandom;
 
 import javax.persistence.*;
 
+import tool.Hasher;
+
 @Entity
-public class Session extends Model implements Serializable {
+@NamedQuery(
+	name = "Session.findByToken",
+	query = "SELECT s FROM Session s WHERE s.token = :token"
+)
+public class Session implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@GeneratedValue
 	private Integer id;
 	
 	@OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="user_id")
 	private User user;
+	
 	@Column(nullable=false)
 	private String token;
+	
+	public Session() {}
+	
 	/**
 	 * @return the id
 	 */
@@ -58,6 +69,6 @@ public class Session extends Model implements Serializable {
 		SecureRandom random = new SecureRandom();
 		byte bytes[] = new byte[20];
 		random.nextBytes(bytes);
-		return bytes.toString();
+		return Hasher.getHash(bytes.toString());
 	}
 }

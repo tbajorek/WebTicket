@@ -1,19 +1,21 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
 
 @Entity
 @NamedQuery(
-	name = "User.findUserByEP",
+	name = "User.findByEP",
 	query = "SELECT u FROM User u WHERE u.email = :email AND u.password = :password"
 )
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@GeneratedValue
 	private Integer id;
 	
 	private String email;
@@ -30,13 +32,15 @@ public class User implements Serializable {
 	private AccountType type;
 	
 	@OneToMany(mappedBy = "author")
-	private List<Ticket> ownTickets;
+	private List<Ticket> ownTickets = new ArrayList<Ticket>();
 	
 	@OneToMany(mappedBy = "recipient")
-	private List<Ticket> adoptedTickets;
+	private List<Ticket> adoptedTickets = new ArrayList<Ticket>();
 	
 	@OneToOne(mappedBy = "user")
 	private Session session;
+	
+	public User() {}
 
 	/**
 	 * @return the session
@@ -158,9 +162,9 @@ public class User implements Serializable {
 	}
 
 	/**
-	 * @param role the type to set
+	 * @param type the type to set
 	 */
-	public void setRole(AccountType type) {
+	public void setType(AccountType type) {
 		this.type = type;
 	}
 
@@ -177,6 +181,10 @@ public class User implements Serializable {
 	public void setOwnTickets(List<Ticket> ownTickets) {
 		this.ownTickets = ownTickets;
 	}
+	
+	public void addOwnTicket(Ticket ownTicket) {
+		this.ownTickets.add(ownTicket);
+	}
 
 	/**
 	 * @return the adoptedTickets
@@ -190,5 +198,9 @@ public class User implements Serializable {
 	 */
 	public void setAdoptedTickets(List<Ticket> adoptedTickets) {
 		this.adoptedTickets = adoptedTickets;
+	}
+	
+	public void addAdoptedTicket(Ticket adoptedTicket) {
+		this.adoptedTickets.add(adoptedTicket);
 	}
 }
