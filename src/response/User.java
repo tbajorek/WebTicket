@@ -1,66 +1,42 @@
-package model;
+package response;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.persistence.*;
-
-import tool.Hasher;
-
-@Entity
-@NamedQuery(
-	name = "User.findByEP",
-	query = "SELECT u FROM User u WHERE u.email = :email AND u.password = :password"
-)
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue
+
 	private Integer id;
 	
 	private String email;
-	private String password;
 	private String name;
 	private String surname;
 	private String position;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="department_id")
+
 	private Department department;
 	
 	private Double rate;
 	
 	private Integer rateCounter;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="type_id")
+
 	private AccountType type;
 	
-	@OneToMany(mappedBy = "author")
-	private List<Ticket> ownTickets = new ArrayList<Ticket>();
-	
-	@OneToMany(mappedBy = "recipient")
-	private List<Ticket> adoptedTickets = new ArrayList<Ticket>();
-	
-	@OneToOne(mappedBy = "user")
-	private Session session;
-	
 	public User() {}
-
-	/**
-	 * @return the session
-	 */
-	public Session getSession() {
-		return session;
+	
+	public User(model.User dbUser, boolean full) {
+		setId(dbUser.getId());
+		setEmail(dbUser.getEmail());
+		setName(dbUser.getName());
+		setSurname(dbUser.getSurname());
+		if(full == true) {
+			setDepartment(new Department(dbUser.getDepartment()));
+			setRate(dbUser.getRate());
+			setRateCounter(dbUser.getRateCounter());
+			setType(new AccountType(dbUser.getType()));
+		}
 	}
-
-	/**
-	 * @param session the session to set
-	 */
-	public void setSession(Session session) {
-		this.session = session;
+	
+	public User(model.User dbUser) {
+		this(dbUser, true);
 	}
 
 	/**
@@ -89,20 +65,6 @@ public class User implements Serializable {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = Hasher.getHash(password);
 	}
 
 	/**
@@ -201,50 +163,5 @@ public class User implements Serializable {
 	 */
 	public void setType(AccountType type) {
 		this.type = type;
-	}
-
-	/**
-	 * @return the ownTickets
-	 */
-	public List<Ticket> getOwnTickets() {
-		return ownTickets;
-	}
-
-	/**
-	 * @param ownTickets the ownTickets to set
-	 */
-	public void setOwnTickets(List<Ticket> ownTickets) {
-		this.ownTickets = ownTickets;
-	}
-	
-	public void addOwnTicket(Ticket ownTicket) {
-		this.ownTickets.add(ownTicket);
-	}
-
-	/**
-	 * @return the adoptedTickets
-	 */
-	public List<Ticket> getAdoptedTickets() {
-		return adoptedTickets;
-	}
-
-	/**
-	 * @param adoptedTickets the adoptedTickets to set
-	 */
-	public void setAdoptedTickets(List<Ticket> adoptedTickets) {
-		this.adoptedTickets = adoptedTickets;
-	}
-	
-	public void addAdoptedTicket(Ticket adoptedTicket) {
-		this.adoptedTickets.add(adoptedTicket);
-	}
-	
-	public boolean equalPassword(String password) {
-		return getPassword().equals(Hasher.getHash(password));
-	}
-	
-	public void addNewRate(Integer rate) {
-		setRate(getRate()*getRateCounter()+rate.doubleValue());
-		setRateCounter(getRateCounter()+1);
 	}
 }

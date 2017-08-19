@@ -31,6 +31,12 @@ public class AccountType implements Serializable {
 	
 	@OneToMany(mappedBy = "type")
 	private List<User> users;
+	
+	public AccountType() {}
+	
+	public AccountType(Integer id) {
+		setId(id);
+	}
 
 	/**
 	 * @return the id

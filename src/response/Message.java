@@ -1,4 +1,4 @@
-package model;
+package response;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -6,32 +6,22 @@ import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity
 public class Message implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue
+
 	private Integer id;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ticket_id")
-	private Ticket ticket;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="author_id")
+
 	private User author;
 	
-	@NotNull
 	private String content;
 	
-	@NotNull
 	private Date created;
 	
-	public Message() {}
-	
-	public Message(Integer id) {
-		setId(id);
+	public Message(model.Message message) {
+		setId(message.getId());
+		setAuthor(new User(message.getAuthor(), false));
+		setContent(message.getContent());
+		setCreated(message.getCreated());
 	}
 
 	/**
@@ -46,20 +36,6 @@ public class Message implements Serializable {
 	 */
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the ticket
-	 */
-	public Ticket getTicket() {
-		return ticket;
-	}
-
-	/**
-	 * @param ticket the ticket to set
-	 */
-	public void setTicket(Ticket ticket) {
-		this.ticket = ticket;
 	}
 
 	/**

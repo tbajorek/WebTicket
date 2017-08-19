@@ -11,6 +11,12 @@ public class RestApplication extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
         resources.add(api.Auth.class);
+        resources.add(api.UserApi.class);
+        resources.add(api.TicketApi.class);
+        resources.add(api.DepartmentApi.class);
+        resources.add(api.MessageApi.class);
+        resources.add(api.MilestoneApi.class);
+        resources.add(api.InvitationApi.class);
         return resources;
     }
 }

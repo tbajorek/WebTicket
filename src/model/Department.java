@@ -7,6 +7,16 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@NamedQueries({
+	@NamedQuery(
+			name = "Department.findAvailable",
+			query = "SELECT t FROM Ticket t WHERE t.department = :department AND t.recipient IS NULL"
+		),
+	@NamedQuery(
+			name = "Department.findAll",
+			query = "SELECT d FROM Department d"
+		)
+})
 public class Department implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -17,13 +27,19 @@ public class Department implements Serializable {
 	private String name;
 	
 	@OneToMany(mappedBy = "department")
-	private List<User> employees;
+	private List<User> users;
 	
 	@OneToMany(mappedBy = "department")
 	private List<Ticket> tickets;
 	
 	@OneToMany(mappedBy = "department")
-	private List<User> invitations;
+	private List<Invitation> invitations;
+	
+	public Department() {}
+	
+	public Department(Integer id) {
+		setId(id);
+	}
 
 	/**
 	 * @return the id
@@ -56,15 +72,15 @@ public class Department implements Serializable {
 	/**
 	 * @return the employees
 	 */
-	public List<User> getEmployees() {
-		return employees;
+	public List<User> getUsers() {
+		return users;
 	}
 
 	/**
-	 * @param employees the employees to set
+	 * @param users the employees to set
 	 */
-	public void setEmployees(List<User> employees) {
-		this.employees = employees;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	/**
@@ -84,14 +100,14 @@ public class Department implements Serializable {
 	/**
 	 * @return the invitations
 	 */
-	public List<User> getInvitations() {
+	public List<Invitation> getInvitations() {
 		return invitations;
 	}
 
 	/**
 	 * @param invitations the invitations to set
 	 */
-	public void setInvitations(List<User> invitations) {
+	public void setInvitations(List<Invitation> invitations) {
 		this.invitations = invitations;
 	}
 

@@ -1,5 +1,6 @@
 package api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -75,5 +76,13 @@ public abstract class AbstractEndpoint {
 	private List<Session> getAllSessionsByToken(String token) {
 		return entityManager.createNamedQuery("Session.findByToken",  Session.class)
 				.setParameter("token", token).getResultList();
+	}
+	
+	protected List<response.Ticket> produceOutputTicketList(List<model.Ticket> dbTicketList) {
+		List<response.Ticket> results = new ArrayList<response.Ticket>();
+		for(model.Ticket ticket : dbTicketList) {
+			results.add(new response.Ticket(ticket));
+		}
+		return results;
 	}
 }

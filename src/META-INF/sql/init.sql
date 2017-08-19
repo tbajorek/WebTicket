@@ -4,4 +4,24 @@ INSERT INTO ACCOUNTTYPE VALUES(2, 'Kierownik');
 INSERT INTO ACCOUNTTYPE VALUES(3, 'Administrator');
 
 INSERT INTO DEPARTMENT VALUES(1, 'Management');
-INSERT INTO USER VALUES(1, 'admin@example.com', 'Jeff', '65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5', 4.3, 'Treater', 1, 3);
+INSERT INTO DEPARTMENT VALUES(2, 'Logistic');
+INSERT INTO USER VALUES(1, 'admin@example.com', 'Jeff', '65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5', 'kierownik biura', 4.3, 10, 'Treater', 1, 3);
+INSERT INTO USER VALUES(2, 'admin2@example.com', 'Josh', '65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5', 'woźny', 2.7, 15, 'Backbone', 2, 1);
+
+INSERT INTO TICKET VALUES(1, NULL, '07-16-2017', '07-17-2017', 1, NULL, 'Brakujący element', 1, 2, 2);
+INSERT INTO TICKET VALUES(2, '12-03-2016', '11-05-2016', '12-03-2016', 1, NULL, 'Potrzebuje klucz', 2, 1, 1);
+INSERT INTO TICKET VALUES(3, NULL, '23-01-2017', '23-01-2017', 1, NULL, 'Mycie samochodu', 1, 2, NULL);
+INSERT INTO TICKET VALUES(4, NULL, '12-24-2016', '12-24-2016', 1, NULL, 'Nowy komputer', 2, 1, NULL);
+
+INSERT INTO MESSAGE VALUES(1, 'Testowy content 1', '07-16-2017', 1, 1);
+INSERT INTO MESSAGE VALUES(2, 'Testowa odpowiedz 1', '07-17-2017', 2, 1);
+INSERT INTO MESSAGE VALUES(3, 'Testowy content 2', '07-18-2017', 1, 1);
+INSERT INTO MESSAGE VALUES(4, 'Testowa odpowiedz 2', '07-19-2017', 2, 1);
+
+INSERT INTO MILESTONE VALUES(1, true, 'Otworzyć szafkę', 1);
+INSERT INTO MILESTONE VALUES(2, false, 'Wyjąć element', 1);
+INSERT INTO MILESTONE VALUES(3, false, 'Przynieść do gabinetu', 1);
+
+INSERT INTO INVITATION VALUES(1, 'invite1@example.com', '098F6BCD4621D373CADE4E832627B4F6', 'Doradca', 1, 2);
+INSERT INTO INVITATION VALUES(2, 'invite2@example.com', '5102ECD3D47F6561DE70979017B87A80', 'Klikacz', 1, 1);
+INSERT INTO INVITATION VALUES(3, 'invite3@example.com', 'D0D41F1A3CC3F67DCD74694DE9FEF1B0', 'Magazynier', 2, 1);

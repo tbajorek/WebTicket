@@ -1,58 +1,49 @@
-package model;
+package response;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import response.Department;
+import response.User;
 
-@Entity
 public class Ticket implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue
+
 	private Integer id;
-	@NotNull
+
 	private String title;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="department_id")
 	private Department department;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="author_id")
 	private User author;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="recipient_id")
 	private User recipient;
 	
 	private Integer rate;
 	
-	@NotNull
 	private Date created;
 	
-	@NotNull
 	private Date lastModified;
 	
 	private Date closed;
 	
 	private Boolean newChanges;
 	
-	@OneToMany(mappedBy = "ticket")
-	private List<Message> messages;
-	
-	@OneToMany(mappedBy = "ticket")
-	private List<Milestone> milestones;
-	
-	public Ticket() {}
-	
-	public Ticket(Integer id) {
-		setId(id);
+	public Ticket(model.Ticket dbTicket) {
+		setId(dbTicket.getId());
+		setTitle(dbTicket.getTitle());
+		setDepartment(new Department(dbTicket.getDepartment()));
+		setAuthor(new User(dbTicket.getAuthor()));
+		if(dbTicket.getRecipient() != null) {
+			setRecipient(new User(dbTicket.getRecipient()));
+		}
+		setRate(dbTicket.getRate());
+		setCreated(dbTicket.getCreated());
+		setLastModified(dbTicket.getLastModified());
+		setClosed(dbTicket.getClosed());
+		setNewChanges(dbTicket.getNewChanges());
 	}
-
+	
 	/**
 	 * @return the id
 	 */
@@ -191,43 +182,5 @@ public class Ticket implements Serializable {
 	 */
 	public void setNewChanges(Boolean newChanges) {
 		this.newChanges = newChanges;
-	}
-
-	/**
-	 * @return the messages
-	 */
-	public List<Message> getMessages() {
-		return messages;
-	}
-
-	/**
-	 * @param messages the messages to set
-	 */
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
-	}
-
-	/**
-	 * @return the milestones
-	 */
-	public List<Milestone> getMilestones() {
-		return milestones;
-	}
-
-	/**
-	 * @param milestones the milestones to set
-	 */
-	public void setMilestones(List<Milestone> milestones) {
-		this.milestones = milestones;
-	}
-	
-	public void setSomethingNew() {
-		setLastModified(new Date());
-		setNewChanges(true);
-	}
-	
-	public boolean hasUserPermissions(User user) {
-		return (getAuthor().getId().equals(user.getId()) ||
-				getRecipient().getId().equals(user.getId()));
 	}
 }

@@ -8,18 +8,17 @@
 		<class>model.Milestone</class>
 		<class>model.AccountType</class>
 		<class>model.Department</class>
-		<!-- <class>model.Invitation</class>
-		<class>model.ResetPassword</class> -->
+		<class>model.Invitation</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.ibm.db2.jcc.DB2Driver"/>
 			<property name="javax.persistence.jdbc.user" value="dash9817"/>
 			<property name="javax.persistence.jdbc.password" value="2ed81bf73601"/>
 			<property name="javax.persistence.jdbc.url" value="jdbc:db2://dashdb-entry-yp-lon02-01.services.eu-gb.bluemix.net:50000/BLUDB:retrieveMessagesFromServerOnGetMessage=true;"/>
-			<property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+			<!--<property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
 			<property name="javax.persistence.schema-generation.create-source" value="metadata-then-script"/>
 			<property name="javax.persistence.schema-generation.drop-source" value="metadata"/>
-			<property name="javax.persistence.schema-generation.create-script-source" value="META-INF/sql/init.sql"/>
-            <property name="eclipselink.logging.level" value="FINE"/> 
+			<property name="javax.persistence.schema-generation.create-script-source" value="META-INF/sql/init.sql"/>-->
+            <property name="eclipselink.logging.level" value="FINE"/>
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -1,27 +1,24 @@
-package model;
+package response;
 
 import java.io.Serializable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity
 public class Milestone implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue
 	private Integer id;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ticket_id")
-	private Ticket ticket;
-	
-	@NotNull
+
 	private String name;
-	
-	@NotNull
+
 	private Boolean done;
+	
+	public Milestone(model.Milestone dbMilestone) {
+		setId(dbMilestone.getId());
+		setName(dbMilestone.getName());
+		setDone(dbMilestone.getDone());
+	}
 
 	/**
 	 * @return the id
@@ -35,20 +32,6 @@ public class Milestone implements Serializable {
 	 */
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the ticket
-	 */
-	public Ticket getTicket() {
-		return ticket;
-	}
-
-	/**
-	 * @param ticket the ticket to set
-	 */
-	public void setTicket(Ticket ticket) {
-		this.ticket = ticket;
 	}
 
 	/**

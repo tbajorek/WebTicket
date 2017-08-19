@@ -1,37 +1,30 @@
-package model;
+package response;
 
 import java.io.Serializable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity
-@NamedQuery(
-	name = "Invitation.findByHash",
-	query = "SELECT i FROM Invitation i WHERE i.hash = :hash"
-)
 public class Invitation implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue
 	private Integer id;
-	@NotNull
+
 	private String email;
 	
-	@NotNull
 	private String hash;
-	
-	@NotNull
-	private String position;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="department_id")
 	private Department department;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="type_id")
-	private AccountType accountType;
+	private AccountType type;
+
+	public Invitation(model.Invitation invitation) {
+		setId(invitation.getId());
+		setEmail(invitation.getEmail());
+		setHash(invitation.getHash());
+		setDepartment(new Department(invitation.getDepartment()));
+		setType(new AccountType(invitation.getAccountType()));
+	}
 
 	/**
 	 * @return the id
@@ -90,30 +83,17 @@ public class Invitation implements Serializable {
 	}
 	
 	/**
-	 * @return the position
+	 * @return the type
 	 */
-	public String getPosition() {
-		return position;
+	public AccountType getType() {
+		return type;
 	}
 
 	/**
-	 * @param position the position to set
+	 * @param type the type to set
 	 */
-	public void setPosition(String position) {
-		this.position = position;
+	public void setType(AccountType type) {
+		this.type = type;
 	}
 	
-	/**
-	 * @return the account type
-	 */
-	public AccountType getAccountType() {
-		return accountType;
-	}
-
-	/**
-	 * @param type the account type to set
-	 */
-	public void setAccountType(AccountType accountType) {
-		this.accountType = accountType;
-	}
 }
