@@ -2,67 +2,95 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * Model for new user registration
+ * 
+ * @author Tomasz Bajorek
+ */
 public class NewUser  implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Registration hash
+	 */
 	private String hash;
+	
+	/**
+	 * Password of new user
+	 */
 	private String password;
+	
+	/**
+	 * Name of new user
+	 */
 	private String name;
+	
+	/**
+	 * Surname of new user
+	 */
 	private String surname;
 	
 	public NewUser() {}
 
 	/**
-	 * @return the hash
+	 * Return registration hash
+	 * @return
 	 */
 	public String getHash() {
 		return hash;
 	}
 
 	/**
-	 * @param hash the hash to set
+	 * Set the given registration hash
+	 * @param hash Registration hash
 	 */
 	public void setHash(String hash) {
 		this.hash = hash;
 	}
 
 	/**
-	 * @return the password
+	 * Return password
+	 * @return
 	 */
 	public String getPassword() {
 		return password;
 	}
 
 	/**
-	 * @param password the password to set
+	 * Set the given password
+	 * @param password Password
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
 	/**
-	 * @return the name
+	 * Return name of new user
+	 * @return
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @param name the name to set
+	 * Set the given name of new user
+	 * @param name Name of new user
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * @return the surname
+	 * Return surname of new user
+	 * @return
 	 */
 	public String getSurname() {
 		return surname;
 	}
 
 	/**
-	 * @param surname the surname to set
+	 * Set the given surname of new user
+	 * @param surname Surname of new user
 	 */
 	public void setSurname(String surname) {
 		this.surname = surname;

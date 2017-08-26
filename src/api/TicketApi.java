@@ -1,17 +1,9 @@
 package api;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
- 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -23,24 +15,29 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import exception.AuthenticateFailed;
 import exception.ForbiddenRequest;
 import model.AccountType;
-import model.AccountType.Types;
 import model.Department;
-import model.Session;
 import model.Ticket;
 import model.User;
 import response.Response;
 
+/**
+ * End point of tickets
+ * 
+ * @author Tomasz Bajorek
+ */
 @Path("/ticket")
 public class TicketApi extends AbstractEndpoint {
-	private static final Types ADMIN = AccountType.Types.ADMIN;
-
+	/**
+	 * Return list of tickets created by owner of the token in response
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("/my")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response my(@HeaderParam("X-Token") String token) {
+    public Response getMyList(@HeaderParam("X-Token") String token) {
         Response response = new Response(1);
         try {
         	authorize(AccountType.Types.WORKER, token);
@@ -61,10 +58,15 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Return list of tickets adopted by owner of the token in response
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("/adopted")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response adopted(@HeaderParam("X-Token") String token) {
+    public Response getAdoptedLIst(@HeaderParam("X-Token") String token) {
         Response response = new Response(1);
         try {
         	authorize(AccountType.Types.WORKER, token);
@@ -85,10 +87,15 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Return list of tickets available to adoption by department of owner of the token. List is returned in response.
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("/available")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response available(@HeaderParam("X-Token") String token) {
+    public Response getAvailableList(@HeaderParam("X-Token") String token) {
         Response response = new Response(1);
         try {
         	authorize(AccountType.Types.WORKER, token);
@@ -110,6 +117,12 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Return details of the concrete ticket in response
+	 * @param id Ticket id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -117,8 +130,14 @@ public class TicketApi extends AbstractEndpoint {
         Response response = new Response(1);
         try {
         	authorize(AccountType.Types.WORKER, token);
+        	User user = getSessionByToken(token).getUser();
         	model.Ticket ticket = (model.Ticket) entityManager.find(model.Ticket.class, id);
         	if(ticket != null) {
+        		ticket.setNewChanges(false);
+        		entityTransaction.begin();
+                entityManager.persist(ticket);
+                entityManager.flush();
+                entityTransaction.commit();
 	        	response.addData("id", ticket.getId());
 	        	response.addData("title", ticket.getTitle());
 	            response.addData("department", new response.Department(ticket.getDepartment()));
@@ -126,6 +145,12 @@ public class TicketApi extends AbstractEndpoint {
 	            response.addData("author", new response.User(ticket.getAuthor()));
 	            if(ticket.getRecipient() != null) {
 	            	response.addData("recipient", new response.User(ticket.getRecipient()));
+	            }
+	            if(ticket.getAuthor().getId().equals(user.getId()) ||
+	               user.getType().getId().equals(model.AccountType.Types.MANAGER.getId()) ||
+	               user.getType().getId().equals(model.AccountType.Types.ADMIN.getId())
+                ) {
+	            	response.addData("rate", ticket.getRate());
 	            }
 	            response.addData("newChanges", ticket.getNewChanges());
 	            response.addData("lastModified", ticket.getLastModified());
@@ -142,6 +167,12 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Create new ticket with the given data. Details of it are returned in response.
+	 * @param ticket Ticket object containing filled name and target department
+	 * @param token Session ticket
+	 * @return
+	 */
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
@@ -176,6 +207,12 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Delete the concrete ticket
+	 * @param id Ticket id
+	 * @param token Session token
+	 * @return
+	 */
 	@DELETE
 	@Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -186,7 +223,7 @@ public class TicketApi extends AbstractEndpoint {
         	User user = getSessionByToken(token).getUser();
         	model.Ticket ticket = (model.Ticket) entityManager.find(model.Ticket.class, id);
         	if(ticket != null) {
-        		if(user.getDepartment().equals(ticket.getDepartment()) || user.getType().getId().equals(ADMIN.getId())) {
+        		if(user.getDepartment().equals(ticket.getDepartment()) || user.getType().getId().equals(AccountType.Types.ADMIN.getId())) {
 	        		entityTransaction.begin();
 	            	entityManager.remove(ticket);
 	            	entityTransaction.commit();
@@ -206,34 +243,34 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Assign the concrete ticket as taken by owner of the session token
+	 * @param id Ticket id
+	 * @param token Session token
+	 * @return
+	 */
 	@PUT
-	@Path("{id}/rate")
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("{id}/take")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response rate(@PathParam("id") Integer id, @HeaderParam("X-Token") String token, model.Ticket ratedTicket) {
+    public Response take(@PathParam("id") Integer id, @HeaderParam("X-Token") String token) {
         Response response = new Response(0);
         try {
         	authorize(AccountType.Types.WORKER, token);
         	User user = getSessionByToken(token).getUser();
         	model.Ticket ticket = (model.Ticket) entityManager.find(model.Ticket.class, id);
         	if(ticket != null) {
-        		if(user.getId().equals(ticket.getAuthor().getId())) {
-        			if(ticket.getClosed()!= null) {
-	        			ticket.setRate(ratedTicket.getRate());
-	        			user.addNewRate(ratedTicket.getRate());
-	        			entityTransaction.begin();
-	                    entityManager.persist(ticket);
-	                    entityManager.persist(user);
-	                    entityManager.flush();
-	                    entityTransaction.commit();
-	                    response.setResponse(1);
-		            	response.addSuccess("Zgłoszenie zostało ocenione");
-        			} else {
-        				response.addError("Nie możesz ocenić zgłoszenia, wciąż jest ono niezamknięte");
-        			}
-        		} else {
-        			response.addError("Nie możesz ocenić zgłoszenia, stworzonego przez innego użytkownika");
-        		}
+        		if(user.getDepartment().getId().equals(ticket.getDepartment().getId())) {
+        			ticket.setRecipient(user);
+        			ticket.setSomethingNew();
+        			entityTransaction.begin();
+                    entityManager.persist(ticket);
+                    entityManager.flush();
+                    entityTransaction.commit();
+                    response.setResponse(1);
+	            	response.addSuccess("Przyjąłeś to zgłoszenie do realizacji");
+    			} else {
+    				response.addError("Nie możesz przyjąć tego zgłoszenia do realizacji");
+    			}
         	} else {
         		response.addError("Nie znaleziono zgłoszenia o id "+id);
         	}
@@ -246,6 +283,67 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Rate the concrete ticket
+	 * @param id Ticket id
+	 * @param token Session token
+	 * @param ratedTicket Ticket object containing rate value
+	 * @return
+	 */
+	@PUT
+	@Path("{id}/rate")
+	@Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response rate(@PathParam("id") Integer id, @HeaderParam("X-Token") String token, model.Ticket ratedTicket) {
+        Response response = new Response(0);
+        try {
+        	authorize(AccountType.Types.WORKER, token);
+        	User user = getSessionByToken(token).getUser();
+        	model.Ticket ticket = (model.Ticket) entityManager.find(model.Ticket.class, id);
+        	if(ticket != null) {
+        		if(ticket.getRecipient()!=null) {
+	        		if(user.getId().equals(ticket.getAuthor().getId())) {
+	        			if(ticket.getClosed()!= null) {
+	        				if(ticket.getRate()==null) {
+	        					User recipient = ticket.getRecipient();
+			        			ticket.setRate(ratedTicket.getRate());
+			        			recipient.addNewRate(ratedTicket.getRate());
+			        			entityTransaction.begin();
+			                    entityManager.persist(ticket);
+			                    entityManager.persist(recipient);
+			                    entityManager.flush();
+			                    entityTransaction.commit();
+			                    response.setResponse(1);
+				            	response.addSuccess("Zgłoszenie zostało ocenione");
+	        				} else {
+	        					response.addError("Zgłoszenie zostało już ocenione");
+	        				}
+	        			} else {
+	        				response.addError("Nie możesz ocenić zgłoszenia, wciąż jest ono niezamknięte");
+	        			}
+	        		} else {
+	        			response.addError("Nie możesz ocenić zgłoszenia, stworzonego przez innego użytkownika");
+	        		}
+	        	} else {
+	        		response.addError("Nie możesz ocenić zgłoszenia, którego nikt nie przyjął");
+        		}
+    		} else {
+    			response.addError("Nie znaleziono zgłoszenia o id "+id);
+    		}
+        } catch (ForbiddenRequest e) {
+        	response.addError("Nie masz dostępu do tego zasobu");
+        } catch (Exception e) {
+            System.out.println("Failed !!! " + e.getMessage());
+        }
+        return response;
+    }
+	
+	/**
+	 * Close the concrete ticket
+	 * @param id Ticket id
+	 * @param token Session token
+	 * @return
+	 */
 	@PUT
 	@Path("{id}/close")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -280,6 +378,12 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Return list of messages associated to the concrete ticket in response
+	 * @param id Ticket id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("{id}/messages")
     @Produces({MediaType.APPLICATION_JSON})
@@ -288,17 +392,23 @@ public class TicketApi extends AbstractEndpoint {
         try {
         	authorize(AccountType.Types.WORKER, token);
         	User user = getSessionByToken(token).getUser();
-        	Ticket ticket = (Ticket) entityManager.find(Ticket.class, id);
-        	if(user.getId().equals(ticket.getAuthor().getId()) || user.getId().equals(ticket.getRecipient().getId())) {
-        		List<model.Message> dbMessages = ticket.getMessages();
-    			if(dbMessages.size() > 0) {
-    	    		List<response.Message> messages = produceOutputMessageList(dbMessages);
-    	            response.addData("messages", messages);
-    			} else {
-    				response.addWarning("Nie znaleziono wiaddomości dla zgłoszenia");
-    			}
+        	model.Ticket ticket = (model.Ticket) entityManager.find(model.Ticket.class, id);
+        	if(ticket!=null) {
+	        	if((user.getId().equals(ticket.getAuthor().getId()) || (ticket.getRecipient()!= null && user.getId().equals(ticket.getRecipient().getId()))) ||
+	        			ticket.getDepartment().getId().equals(user.getDepartment().getId())) {
+	        		List<model.Message> dbMessages = ticket.getMessages();
+	    			if(dbMessages.size() > 0) {
+	    	    		List<response.Message> messages = produceOutputMessageList(dbMessages);
+	    	            response.addData("messages", messages);
+	    			} else {
+	    				response.addWarning("Nie znaleziono wiadomości dla zgłoszenia");
+	    			}
+	        	} else {
+	        		throw new ForbiddenRequest(user);
+	        	}
         	} else {
-        		throw new ForbiddenRequest();
+        		response.setResponse(0);
+            	response.addError("Zgłoszenie, którego wiadomości zażądałeś nie istnieje");
         	}
         } catch (ForbiddenRequest e) {
         	response.setResponse(0);
@@ -309,6 +419,12 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Return list of milestones associated to the concrete ticket in response
+	 * @param id Ticket id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("{id}/milestones")
     @Produces({MediaType.APPLICATION_JSON})
@@ -327,7 +443,7 @@ public class TicketApi extends AbstractEndpoint {
     				response.addWarning("Nie znaleziono kroków milowych dla zgłoszenia");
     			}
         	} else {
-        		throw new ForbiddenRequest();
+        		throw new ForbiddenRequest(user);
         	}
         } catch (ForbiddenRequest e) {
         	response.setResponse(0);
@@ -338,6 +454,11 @@ public class TicketApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Convert the given list to list of messages allowed to send in response
+	 * @param dbMessageList List of messages from database
+	 * @return
+	 */
 	protected List<response.Message> produceOutputMessageList(List<model.Message> dbMessageList) {
 		List<response.Message> results = new ArrayList<response.Message>();
 		for(model.Message message : dbMessageList) {
@@ -346,6 +467,11 @@ public class TicketApi extends AbstractEndpoint {
 		return results;
 	}
 	
+	/**
+	 * Convert the given list to list of milestones allowed to send in response
+	 * @param dbMilestoneList List of milestones from database
+	 * @return
+	 */
 	protected List<response.Milestone> produceOutputMilestoneList(List<model.Milestone> dbMilestoneList) {
 		List<response.Milestone> results = new ArrayList<response.Milestone>();
 		for(model.Milestone milestone : dbMilestoneList) {

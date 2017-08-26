@@ -2,34 +2,50 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * Model for change password operations
+ * 
+ * @author Tomasz Bajorek
+ */
 public class NewPassword  implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String oldPassword;
-	private String newPassword;
+	
 	/**
-	 * @return the oldPassword
+	 * Old password
+	 */
+	private String oldPassword;
+	
+	/**
+	 * New password
+	 */
+	private String newPassword;
+	
+	/**
+	 * Return old password
+	 * @return
 	 */
 	public String getOldPassword() {
 		return oldPassword;
 	}
 	/**
-	 * @param oldPassword the oldPassword to set
+	 * Set the given old password
+	 * @param oldPassword Old password
 	 */
 	public void setOldPassword(String oldPassword) {
 		this.oldPassword = oldPassword;
 	}
 	/**
-	 * @return the newPassword
+	 * Return new password
+	 * @return
 	 */
 	public String getNewPassword() {
 		return newPassword;
 	}
 	/**
-	 * @param newPassword the newPassword to set
+	 * Set the given new password
+	 * @param newPassword New password
 	 */
 	public void setNewPassword(String newPassword) {
 		this.newPassword = newPassword;
 	}
-	
-	
 }

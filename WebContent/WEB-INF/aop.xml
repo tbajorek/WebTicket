@@ -1,0 +1,8 @@
+<aspectj>
+        <aspects>
+                <aspect name="wtaspect.*"/>
+        </aspects>
+        <weaver options="-verbose -showWeaveInfo -debug">
+                <include within="api.*"/>     
+        </weaver>
+</aspectj>

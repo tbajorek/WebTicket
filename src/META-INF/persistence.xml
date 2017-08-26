@@ -9,6 +9,7 @@
 		<class>model.AccountType</class>
 		<class>model.Department</class>
 		<class>model.Invitation</class>
+		<shared-cache-mode>NONE</shared-cache-mode>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.ibm.db2.jcc.DB2Driver"/>
 			<property name="javax.persistence.jdbc.user" value="dash9817"/>

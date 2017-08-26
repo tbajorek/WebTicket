@@ -5,8 +5,16 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+/**
+ * Main class of REST application
+ * 
+ * @author Tomasz Bajorek
+ */
 @ApplicationPath("api")
 public class RestApplication extends Application {
+	/**
+	 * Prepare a set of class with REST resources
+	 */
 	@Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();

@@ -2,18 +2,37 @@ package response;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Response class of ticket milestone
+ * 
+ * @author Tomasz Bajorek
+ */
 public class Milestone implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Identifier of milestone
+	 */
 	private Integer id;
 
+	/*
+	 * Name of the milestone
+	 */
+	@NotNull
 	private String name;
 
+	/**
+	 * Flag if the milestone is done
+	 */
+	@NotNull
 	private Boolean done;
 	
+	/**
+	 * Initialization of response milestone based on model milestone
+	 * @param milestone Model milestone
+	 */
 	public Milestone(model.Milestone dbMilestone) {
 		setId(dbMilestone.getId());
 		setName(dbMilestone.getName());
@@ -21,42 +40,48 @@ public class Milestone implements Serializable {
 	}
 
 	/**
-	 * @return the id
+	 * Return milestone identifier
+	 * @return
 	 */
 	public Integer getId() {
 		return id;
 	}
 
 	/**
-	 * @param id the id to set
+	 * Set the given milestone identifier
+	 * @param id Milestone identifier
 	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
 	/**
-	 * @return the name
+	 * Return name of the milestone
+	 * @return
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @param name the name to set
+	 * Set the given milestone name
+	 * @param name Milestone name
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * @return the done
+	 * Return a flag if the milestone is done
+	 * @return
 	 */
 	public Boolean getDone() {
 		return done;
 	}
 
 	/**
-	 * @param done the done to set
+	 * Set the given flag
+	 * @param done Flag if the milestone is done
 	 */
 	public void setDone(Boolean done) {
 		this.done = done;

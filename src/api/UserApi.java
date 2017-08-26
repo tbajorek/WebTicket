@@ -1,17 +1,8 @@
 package api;
 
-import java.security.SecureRandom;
 import java.util.List;
-import java.util.Map;
  
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -21,20 +12,27 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import exception.AuthenticateFailed;
 import exception.ForbiddenRequest;
 import model.AccountType;
-import model.Department;
 import model.Invitation;
 import model.NewPassword;
 import model.NewUser;
-import model.Session;
 import model.User;
 import response.Response;
-import tool.Hasher;
 
+/**
+ * End point of users
+ * 
+ * @author Tomasz Bajorek
+ */
 @Path("/user")
 public class UserApi extends AbstractEndpoint {
+	/**
+	 * Return user information in response
+	 * @param id User id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -50,7 +48,7 @@ public class UserApi extends AbstractEndpoint {
 	            response.addData("surname", user.getSurname());
 	            response.addData("department", new response.Department(user.getDepartment()));
 	            response.addData("position", user.getPosition());
-	            if(user.getType().getId().compareTo(AccountType.Types.MANAGER.getId()) >= 0) {
+	            if(getSessionByToken(token).getUser().getType().getId().compareTo(AccountType.Types.MANAGER.getId()) >= 0) {
 	            	response.addData("rate", user.getRate());
 	            }
 			} else {
@@ -65,6 +63,13 @@ public class UserApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Change password of the concrete user
+	 * @param id User id
+	 * @param token Session token
+	 * @param newPassword Object containing new password value
+	 * @return
+	 */
 	@PUT
 	@Path("{id}/password")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -75,7 +80,7 @@ public class UserApi extends AbstractEndpoint {
         	authorize(AccountType.Types.WORKER, token);
         	User user = getSessionByToken(token).getUser();
         	if(!id.equals(user.getId())) {
-        		throw new ForbiddenRequest();
+        		throw new ForbiddenRequest(user);
         	}
         	if(user.equalPassword(newPassword.getOldPassword())) {
         		user.setPassword(newPassword.getNewPassword());
@@ -97,6 +102,13 @@ public class UserApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Change profile data of the concrete user
+	 * @param id User id
+	 * @param token Session token
+	 * @param userData User object containing filled data with email, name and surname
+	 * @return
+	 */
 	@PUT
 	@Path("{id}/profile")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -107,7 +119,7 @@ public class UserApi extends AbstractEndpoint {
         	authorize(AccountType.Types.WORKER, token);
         	User user = getSessionByToken(token).getUser();
         	if(!id.equals(user.getId())) {
-        		throw new ForbiddenRequest();
+        		throw new ForbiddenRequest(user);
         	}
         	if(userData.getName() != null) {
         		user.setName(userData.getName());
@@ -121,6 +133,7 @@ public class UserApi extends AbstractEndpoint {
         	entityTransaction.begin();
             entityManager.merge(user);
             entityTransaction.commit();
+            response.addData("user", new response.User(user));
         	response.addSuccess("Twoje dane zostały zmienione");
         } catch (ForbiddenRequest e) {
         	response.setResponse(0);
@@ -131,6 +144,13 @@ public class UserApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Change department of the concrete user
+	 * @param id User id
+	 * @param token Session token
+	 * @param newDepartment Department object contains identifier of the new department
+	 * @return
+	 */
 	@PUT
 	@Path("{id}/department")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -163,25 +183,35 @@ public class UserApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Change position of the concrete user
+	 * @param id User id
+	 * @param token Session token
+	 * @param newUser User object containing new position
+	 * @return
+	 */
 	@PUT
 	@Path("{id}/position")
 	@Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response changeDepartment(@PathParam("id") Integer id, @HeaderParam("X-Token") String token, User newUser) {
+    public Response changePosition(@PathParam("id") Integer id, @HeaderParam("X-Token") String token, User newUser) {
         Response response = new Response(1);
         try {
         	authorize(AccountType.Types.MANAGER, token);
         	User user = (User) entityManager.find(User.class, id);
         	if(user != null) {
         		User manager = getSessionByToken(token).getUser();
-        		if(!manager.getDepartment().getId().equals(user.getDepartment().getId())) {
-        			throw new ForbiddenRequest();
+        		if(manager.getDepartment().getId().equals(user.getDepartment().getId()) ||
+        			manager.getType().getId().equals(model.AccountType.Types.ADMIN.getId()))
+        		{
+        			user.setPosition(newUser.getPosition());
+    	        	entityTransaction.begin();
+    	            entityManager.merge(user);
+    	            entityTransaction.commit();
+    	        	response.addSuccess("Stanowisko użytkownika "+user.getName()+" "+user.getSurname()+" zostało zmienione");
+        		} else {
+        			throw new ForbiddenRequest(user);
         		}
-	        	user.setPosition(newUser.getPosition());
-	        	entityTransaction.begin();
-	            entityManager.merge(user);
-	            entityTransaction.commit();
-	        	response.addSuccess("Stanowisko użytkownika "+user.getName()+" "+user.getSurname()+" zostało zmienione");
         	} else {
         		response.addError("Nie znaleziono użytkownika");
         	}
@@ -194,6 +224,12 @@ public class UserApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Register new user in application. Details are returned in response
+	 * @param hash Registration hash
+	 * @param newUser Object containing data of new user: name, surname and email values
+	 * @return
+	 */
 	@POST
 	@Path("{hash}")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -233,6 +269,11 @@ public class UserApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Find an invitation associated with the given hash if it exists in database
+	 * @param hash Register hash
+	 * @return
+	 */
 	private Invitation findInvitation(String hash) {
 		List<Invitation> invitations = entityManager.createNamedQuery("Invitation.findByHash",  model.Invitation.class)
 				.setParameter("hash", hash)

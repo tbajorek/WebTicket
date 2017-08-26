@@ -1,8 +1,4 @@
 package api;
- 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -15,24 +11,30 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import exception.AuthenticateFailed;
 import exception.ForbiddenRequest;
 import model.AccountType;
-import model.AccountType.Types;
-import model.Session;
 import model.Ticket;
 import model.Milestone;
 import model.User;
-import model.Department;
 import response.Response;
-import tool.Hasher;
 
+/**
+ * End point of milestones
+ * 
+ * @author Tomasz Bajorek
+ */
 @Path("/milestone")
 public class MilestoneApi extends AbstractEndpoint {
+	/**
+	 * Return information of the concrete milestone in response
+	 * @param id Milestone id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response profile(@PathParam("id") Integer id, @HeaderParam("X-Token") String token) {
+    public Response view(@PathParam("id") Integer id, @HeaderParam("X-Token") String token) {
         Response response = new Response(1);
         try {
         	authorize(AccountType.Types.WORKER, token);
@@ -40,7 +42,7 @@ public class MilestoneApi extends AbstractEndpoint {
 			if(milestone != null) {
 				User user = getSessionByToken(token).getUser();
 				if(!milestone.getTicket().hasUserPermissions(user)) {
-					throw new ForbiddenRequest();
+					throw new ForbiddenRequest(user);
 				}
 				response.Milestone outputMilestone = new response.Milestone(milestone);
 	            response.addData("id", outputMilestone.getId());
@@ -58,6 +60,12 @@ public class MilestoneApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Create new milestone with the given data
+	 * @param newMilestone Milestone object contains filled name and id of related ticket
+	 * @param token Session token
+	 * @return
+	 */
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
@@ -68,7 +76,7 @@ public class MilestoneApi extends AbstractEndpoint {
         	Ticket dbTicket = (model.Ticket) entityManager.find(Ticket.class, newMilestone.getTicket().getId());
         	User user = getSessionByToken(token).getUser();
         	if(!dbTicket.hasUserPermissions(user)) {
-        		throw new ForbiddenRequest();
+        		throw new ForbiddenRequest(user);
         	}
             entityTransaction.begin();
             entityManager.persist(newMilestone);
@@ -85,6 +93,13 @@ public class MilestoneApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Change information about the concrete milestone
+	 * @param id Milestone id
+	 * @param token Session token
+	 * @param newMilestone Milestone object contains filled name flag if it is done
+	 * @return
+	 */
 	@PUT
 	@Path("{id}")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -97,7 +112,7 @@ public class MilestoneApi extends AbstractEndpoint {
         	Milestone dbMilestone = (Milestone) entityManager.find(Milestone.class, id);
         	if(dbMilestone != null) {
 	        	if(!dbMilestone.getTicket().hasUserPermissions(user)) {
-	        		throw new ForbiddenRequest();
+	        		throw new ForbiddenRequest(user);
 	        	}
 	        	if(newMilestone.getName() != null) {
 	        		dbMilestone.setName(newMilestone.getName());
@@ -122,6 +137,12 @@ public class MilestoneApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Delete the concrete milestone
+	 * @param id Milestone id
+	 * @param token Session token
+	 * @return
+	 */
 	@DELETE
 	@Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -133,7 +154,7 @@ public class MilestoneApi extends AbstractEndpoint {
         	Milestone milestone = (Milestone) entityManager.find(Milestone.class, id);
         	if(milestone != null) {
         		if(!milestone.getTicket().hasUserPermissions(user)) {
-	        		throw new ForbiddenRequest();
+	        		throw new ForbiddenRequest(user);
 	        	}
         		entityTransaction.begin();
             	entityManager.remove(milestone);

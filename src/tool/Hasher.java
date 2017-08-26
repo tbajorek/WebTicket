@@ -3,7 +3,17 @@ package tool;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * SHA-256 hash generator
+ * 
+ * @author Tomasz Bajorek
+ */
 public class Hasher {
+	/**
+	 * Generate hash based on input
+	 * @param input Input text
+	 * @return
+	 */
 	public static String getHash(String input) {
 		try {
 	        MessageDigest sha256 = MessageDigest.getInstance("SHA-256");

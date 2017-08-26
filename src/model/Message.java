@@ -6,99 +6,136 @@ import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Entity of ticket message
+ * 
+ * @author Tomasz Bajorek
+ */
 @Entity
 public class Message implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Identifier of the entity
+	 */
 	@Id
 	@GeneratedValue
 	private Integer id;
 	
+	/**
+	 * Ticket to which the message belongs
+	 */
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="ticket_id")
 	private Ticket ticket;
 	
+	/**
+	 * Author of the message
+	 */
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="author_id")
 	private User author;
 	
+	/**
+	 * Message content
+	 */
 	@NotNull
 	private String content;
 	
+	/**
+	 * Date when the message has been created
+	 */
 	@NotNull
 	private Date created;
 	
+	/**
+	 * Initialization of empty message object
+	 */
 	public Message() {}
 	
+	/**
+	 * Initialization of the object with given message id
+	 * @param id Message identifier
+	 */
 	public Message(Integer id) {
 		setId(id);
 	}
 
 	/**
-	 * @return the id
+	 * Return message identifier
+	 * @return
 	 */
 	public Integer getId() {
 		return id;
 	}
 
 	/**
-	 * @param id the id to set
+	 * Set the given message identifier
+	 * @param id Message identifier
 	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
 	/**
-	 * @return the ticket
+	 * Return associated ticket
+	 * @return
 	 */
 	public Ticket getTicket() {
 		return ticket;
 	}
 
 	/**
-	 * @param ticket the ticket to set
+	 * Set the given ticket
+	 * @param ticket Ticket object
 	 */
 	public void setTicket(Ticket ticket) {
 		this.ticket = ticket;
 	}
 
 	/**
-	 * @return the author
+	 * Return author of the message
+	 * @return
 	 */
 	public User getAuthor() {
 		return author;
 	}
 
 	/**
-	 * @param author the author to set
+	 * Set the given author of message
+	 * @param author Author of message
 	 */
 	public void setAuthor(User author) {
 		this.author = author;
 	}
 
 	/**
-	 * @return the content
+	 * Return message content
+	 * @return
 	 */
 	public String getContent() {
 		return content;
 	}
 
 	/**
-	 * @param content the content to set
+	 * Set the given content of the message
+	 * @param content Message content
 	 */
 	public void setContent(String content) {
 		this.content = content;
 	}
 
 	/**
-	 * @return the created
+	 * Return date of creation the message
+	 * @return
 	 */
 	public Date getCreated() {
 		return created;
 	}
 
 	/**
-	 * @param created the created to set
+	 * Set the given date of creation
+	 * @param created Date of creation
 	 */
 	public void setCreated(Date created) {
 		this.created = created;

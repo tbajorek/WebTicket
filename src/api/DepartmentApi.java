@@ -1,7 +1,6 @@
 package api;
  
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -15,21 +14,24 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import exception.AuthenticateFailed;
 import exception.ForbiddenRequest;
 import model.AccountType;
-import model.AccountType.Types;
-import model.Session;
-import model.Ticket;
 import model.User;
 import model.Department;
 import response.Response;
-import tool.Hasher;
 
+/**
+ * End point of activities about department
+ * 
+ * @author Tomasz Bajorek
+ */
 @Path("/department")
 public class DepartmentApi extends AbstractEndpoint {
-	private static final Types ADMIN = AccountType.Types.ADMIN;
-	
+	/**
+	 * Return list of all departments in response
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response list(@HeaderParam("X-Token") String token) {
@@ -53,6 +55,47 @@ public class DepartmentApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Return details of concrete department in response
+	 * @param id Department id
+	 * @param token Session token
+	 * @return
+	 */
+	@GET
+	@Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response details(@PathParam("id") Integer id, @HeaderParam("X-Token") String token) {
+        Response response = new Response(1);
+        try {
+        	authorize(AccountType.Types.WORKER, token);
+        	User user = getSessionByToken(token).getUser();
+        	Department department = (Department) entityManager.find(Department.class, id);
+        	if(department != null) {
+        		if(user.getDepartment().equals(department) || user.getType().getId().equals(AccountType.Types.ADMIN.getId())) {
+        			response.addData("id", department.getId());
+        			response.addData("name", department.getName());
+        		} else {
+            		throw new ForbiddenRequest(user);
+            	}
+        	} else {
+        		response.setResponse(0);
+        		response.addError("Nie znaleziono departamentu");
+        	}
+        } catch (ForbiddenRequest e) {
+        	response.setResponse(0);
+        	response.addError("Nie masz dostępu do tego zasobu");
+        } catch (Exception e) {
+            System.out.println("Failed !!! " + e.getMessage());
+        }
+        return response;
+    }
+	
+	/**
+	 * Return list of tickets associated to the concrete department in response
+	 * @param id Department id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
 	@Path("{id}/tickets")
     @Produces({MediaType.APPLICATION_JSON})
@@ -62,7 +105,7 @@ public class DepartmentApi extends AbstractEndpoint {
         	authorize(AccountType.Types.WORKER, token);
         	User user = getSessionByToken(token).getUser();
         	Department department = (Department) entityManager.find(Department.class, id);
-        	if(user.getDepartment().equals(department) || user.getType().getId().equals(ADMIN.getId())) {
+        	if(user.getDepartment().equals(department) || user.getType().getId().equals(AccountType.Types.ADMIN.getId())) {
         		List<model.Ticket> departmentDbTickets = department.getTickets();
     			if(departmentDbTickets.size() > 0) {
     	    		List<response.Ticket> departmentTickets = produceOutputTicketList(departmentDbTickets);
@@ -71,7 +114,7 @@ public class DepartmentApi extends AbstractEndpoint {
     				response.addWarning("Nie znaleziono zgłoszeń w departamencie "+department.getName());
     			}
         	} else {
-        		throw new ForbiddenRequest();
+        		throw new ForbiddenRequest(user);
         	}
         } catch (ForbiddenRequest e) {
         	response.setResponse(0);
@@ -82,6 +125,12 @@ public class DepartmentApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Return all users who are members of the concrete department in response
+	 * @param id Department id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
 	@Path("{id}/users")
     @Produces({MediaType.APPLICATION_JSON})
@@ -91,17 +140,23 @@ public class DepartmentApi extends AbstractEndpoint {
         	authorize(AccountType.Types.WORKER, token);
         	User user = getSessionByToken(token).getUser();
         	Department department = (Department) entityManager.find(Department.class, id);
-        	if(user.getDepartment().equals(department) || user.getType().getId().equals(ADMIN.getId())) {
-        		List<model.User> departmentDbUsers = department.getUsers();
-    			if(departmentDbUsers.size() > 0) {
-    	    		List<response.User> departmentUsers = produceOutputUserList(departmentDbUsers);
-    	            response.addData("users", departmentUsers);
-    			} else {
-    				response.addWarning("Nie znaleziono użytkowników w departamencie "+department.getName());
-    			}
+        	if(department != null ) {
+        		if(user.getDepartment().equals(department) || user.getType().getId().equals(AccountType.Types.ADMIN.getId())) {
+            		List<model.User> departmentDbUsers = department.getUsers();
+        			if(departmentDbUsers.size() > 0) {
+        	    		List<response.User> departmentUsers = produceOutputUserList(departmentDbUsers);
+        	            response.addData("users", departmentUsers);
+        			} else {
+        				response.addWarning("Nie znaleziono użytkowników w departamencie "+department.getName());
+        			}
+            	} else {
+            		throw new ForbiddenRequest(user);
+            	}
         	} else {
-        		throw new ForbiddenRequest();
+        		response.setResponse(0);
+            	response.addError("Departament, którego użytkowników chcesz pobrać, nie istnieje");
         	}
+        	
         } catch (ForbiddenRequest e) {
         	response.setResponse(0);
         	response.addError("Nie masz dostępu do tego zasobu");
@@ -111,6 +166,12 @@ public class DepartmentApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Return list of invitations for the concrete department in advance
+	 * @param id Department id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
 	@Path("{id}/invitations")
     @Produces({MediaType.APPLICATION_JSON})
@@ -120,17 +181,23 @@ public class DepartmentApi extends AbstractEndpoint {
         	authorize(AccountType.Types.MANAGER, token);
         	User user = getSessionByToken(token).getUser();
         	Department department = (Department) entityManager.find(Department.class, id);
-        	if(user.getDepartment().equals(department) || user.getType().getId().equals(ADMIN.getId())) {
-        		List<model.Invitation> departmentDbInvitations = department.getInvitations();
-    			if(departmentDbInvitations.size() > 0) {
-    	    		List<response.Invitation> departmentInvitations = produceOutputInvitationList(departmentDbInvitations);
-    	            response.addData("invitations", departmentInvitations);
-    			} else {
-    				response.addWarning("Nie znaleziono zaproszeń w departamencie "+department.getName());
-    			}
+        	if(department != null ) {
+        		if(user.getDepartment().equals(department) || user.getType().getId().equals(AccountType.Types.ADMIN.getId())) {
+            		List<model.Invitation> departmentDbInvitations = department.getInvitations();
+        			if(departmentDbInvitations.size() > 0) {
+        	    		List<response.Invitation> departmentInvitations = produceOutputInvitationList(departmentDbInvitations);
+        	            response.addData("invitations", departmentInvitations);
+        			} else {
+        				response.addWarning("Nie znaleziono zaproszeń w departamencie "+department.getName());
+        			}
+            	} else {
+            		throw new ForbiddenRequest(user);
+            	}
         	} else {
-        		throw new ForbiddenRequest();
+        		response.setResponse(0);
+            	response.addError("Departament, do którego zaproszenia chcesz pobrać, nie istnieje");
         	}
+        	
         } catch (ForbiddenRequest e) {
         	response.setResponse(0);
         	response.addError("Nie masz dostępu do tego zasobu");
@@ -140,6 +207,12 @@ public class DepartmentApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Add new department to the database. Id and name of it are returned in response
+	 * @param department Department object with filled name data
+	 * @param token Session token
+	 * @return
+	 */
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
@@ -163,6 +236,13 @@ public class DepartmentApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Change name of the concrete department. The new name is returned in response.
+	 * @param id Department id
+	 * @param token Session token
+	 * @param inputDepartment Department object with filled name data
+	 * @return
+	 */
 	@PUT
 	@Path("{id}")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -193,6 +273,12 @@ public class DepartmentApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Delete the concrete department
+	 * @param id Department id
+	 * @param token Session token
+	 * @return
+	 */
 	@DELETE
 	@Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -218,6 +304,11 @@ public class DepartmentApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Convert the given list to list of invitations allowed to send in response
+	 * @param dbInvitationList List of invitations from database
+	 * @return
+	 */
 	protected List<response.Invitation> produceOutputInvitationList(List<model.Invitation> dbInvitationList) {
 		List<response.Invitation> results = new ArrayList<response.Invitation>();
 		for(model.Invitation invitation : dbInvitationList) {
@@ -226,6 +317,11 @@ public class DepartmentApi extends AbstractEndpoint {
 		return results;
 	}
 	
+	/**
+	 * Convert the given list to list of departments allowed to send in response
+	 * @param dbDepartmentList List of departments from database
+	 * @return
+	 */
 	protected List<response.Department> produceOutputDepartmentList(List<model.Department> dbDepartmentList) {
 		List<response.Department> results = new ArrayList<response.Department>();
 		for(model.Department department : dbDepartmentList) {
@@ -234,6 +330,11 @@ public class DepartmentApi extends AbstractEndpoint {
 		return results;
 	}
 	
+	/**
+	 * Convert the given list to list of users allowed to send in response
+	 * @param dbUserList List of users from database
+	 * @return
+	 */
 	protected List<response.User> produceOutputUserList(List<model.User> dbUserList) {
 		List<response.User> results = new ArrayList<response.User>();
 		for(model.User user : dbUserList) {

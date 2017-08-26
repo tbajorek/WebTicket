@@ -1,9 +1,6 @@
 package api;
  
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -15,32 +12,38 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import exception.AuthenticateFailed;
 import exception.ForbiddenRequest;
 import model.AccountType;
-import model.AccountType.Types;
-import model.Session;
 import model.Ticket;
 import model.Message;
 import model.User;
-import model.Department;
 import response.Response;
-import tool.Hasher;
 
+/**
+ * End point of ticket messages
+ * 
+ * @author Tomasz Bajorek
+ */
 @Path("/message")
 public class MessageApi extends AbstractEndpoint {
+	/**
+	 * Return message data in response
+	 * @param id Message id
+	 * @param token Session token
+	 * @return
+	 */
 	@GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response profile(@PathParam("id") Integer id, @HeaderParam("X-Token") String token) {
+    public Response view(@PathParam("id") Integer id, @HeaderParam("X-Token") String token) {
         Response response = new Response(1);
         try {
         	authorize(AccountType.Types.WORKER, token);
 			model.Message message = (model.Message) entityManager.find(model.Message.class, id);
 			if(message != null) {
 				User user = getSessionByToken(token).getUser();
-				if(message.getTicket().hasUserPermissions(user)) {
-					throw new ForbiddenRequest();
+				if(!message.getTicket().hasUserPermissions(user)) {
+					throw new ForbiddenRequest(user);
 				}
 				response.Message outputMessage = new response.Message(message);
 	            response.addData("id", outputMessage.getId());
@@ -59,6 +62,12 @@ public class MessageApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Add new message to the database
+	 * @param newMessage Message object containing content of sending message
+	 * @param token Session token
+	 * @return
+	 */
 	@POST
 	@Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
@@ -69,12 +78,14 @@ public class MessageApi extends AbstractEndpoint {
         	Ticket dbTicket = (model.Ticket) entityManager.find(Ticket.class, newMessage.getTicket().getId());
         	User user = getSessionByToken(token).getUser();
         	if(!dbTicket.hasUserPermissions(user)) {
-        		throw new ForbiddenRequest();
+        		throw new ForbiddenRequest(user);
         	}
         	newMessage.setAuthor(user);
         	newMessage.setCreated(new Date());
+        	dbTicket.setSomethingNew();
             entityTransaction.begin();
             entityManager.persist(newMessage);
+            entityManager.persist(dbTicket);
             entityManager.flush();
             entityTransaction.commit();
             response.addData("id", newMessage.getId());
@@ -88,6 +99,13 @@ public class MessageApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Change content of the concrete message
+	 * @param id Message id
+	 * @param token Session token
+	 * @param newMessage Message object containing new content
+	 * @return
+	 */
 	@PUT
 	@Path("{id}")
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -99,8 +117,8 @@ public class MessageApi extends AbstractEndpoint {
         	User user = getSessionByToken(token).getUser();
         	Message dbMessage = (Message) entityManager.find(Message.class, id);
         	if(dbMessage != null) {
-	        	if(!dbMessage.getTicket().hasUserPermissions(user)) {
-	        		throw new ForbiddenRequest();
+        		if(!dbMessage.getAuthor().getId().equals(user.getId())) {
+	        		throw new ForbiddenRequest(user);
 	        	}
 	        	if(newMessage.getContent() != null) {
 	        		dbMessage.setContent(newMessage.getContent());
@@ -122,6 +140,12 @@ public class MessageApi extends AbstractEndpoint {
         return response;
     }
 	
+	/**
+	 * Delete the concrete message
+	 * @param id Message id
+	 * @param token Session token
+	 * @return
+	 */
 	@DELETE
 	@Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -132,8 +156,8 @@ public class MessageApi extends AbstractEndpoint {
         	User user = getSessionByToken(token).getUser();
         	Message message = (Message) entityManager.find(Message.class, id);
         	if(message != null) {
-        		if(!message.getTicket().hasUserPermissions(user)) {
-	        		throw new ForbiddenRequest();
+        		if(!message.getAuthor().getId().equals(user.getId())) {
+	        		throw new ForbiddenRequest(user);
 	        	}
         		entityTransaction.begin();
             	entityManager.remove(message);
