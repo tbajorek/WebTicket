@@ -1,0 +1,22 @@
+/* Main styles */
+body {
+    background-color: #eee;
+}
+
+.content {
+    min-height: 100px;
+}
+
+.row {
+    margin: 0px !important;
+}
+
+.footer {
+    text-align: center;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.logo {
+    max-height: 40px;
+}

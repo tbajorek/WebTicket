@@ -1,0 +1,63 @@
+/* Styles of ticket elements */
+.ticket-header {
+    background-color: #e0dddd;
+    padding: 5px;
+}
+
+.ticket-header button {
+    margin-right: 10px;
+}
+
+/* Messages view */
+.message-list
+{
+    list-style: none;
+    margin: 0;
+    margin-top: 10px;
+    padding: 0;
+}
+
+.message-list li
+{
+    margin-bottom: 5px;
+    padding: 5px;
+    border-bottom: 1px dotted #B3A9A9;
+    background-color: #f7f7f7;
+}
+
+.message-list .header {
+    margin-bottom: 10px;
+}
+
+.message-list li.left .message-body
+{
+    margin-left: 60px;
+}
+
+.message-list li.right .message-body
+{
+    margin-right: 60px;
+}
+
+
+.message-list li .message-body p
+{
+    margin: 0;
+    color: #777777;
+}
+
+.message-menu {
+    margin-top: 10px;
+}
+
+.message-menu button {
+    margin-right: 12px;
+}
+
+.message-form {
+    margin-top: 12px;
+}
+
+.message-form button {
+    margin-top: 7px;
+}

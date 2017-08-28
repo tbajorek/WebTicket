@@ -1,2 +1,12 @@
 build/
 WebContent/WEB-INF/lib
+WebContent/*.ico
+WebContent/*.svg
+WebContent/*.woff
+WebContent/*.woff2
+WebContent/*.png
+WebContent/*.eot
+WebContent/*.ttf
+WebContent/bundle.js
+WebContent/index.html
+client/node_modules/

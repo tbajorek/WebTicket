@@ -1,0 +1,55 @@
+{
+  "name": "webticket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/js/Application.js",
+  "scripts": {
+    "build": "webpack -d",
+    "start": "webpack-dev-server -d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbajorek/WebTicket.git"
+  },
+  "author": "Tomasz Bajorek <tbajorek3@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tbajorek/WebTicket/issues"
+  },
+  "homepage": "https://github.com/tbajorek/WebTicket#readme",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "bootstrap": "^3.3.7",
+    "css-loader": "^0.28.5",
+    "file-loader": "^0.11.2",
+    "node-sass": "^4.5.3",
+    "rc-rate": "^2.1.1",
+    "react": "^15.6.1",
+    "react-bootstrap": "^0.31.2",
+    "react-dom": "^15.6.1",
+    "react-favicon": "0.0.9",
+    "react-quill": "^1.1.0",
+    "react-router": "^4.1.2",
+    "react-router-bootstrap": "^0.24.2",
+    "react-router-dom": "^4.1.2",
+    "react-rte": "^0.14.1",
+    "react-wysiwyg-editor": "0.0.9",
+    "reflux": "^6.4.1",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "url-loader": "^0.5.9"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.30.1",
+    "image-webpack-loader": "^3.3.1",
+    "react-datatable": "0.0.31",
+    "webpack": "^3.5.5"
+  }
+}

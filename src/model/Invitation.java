@@ -147,7 +147,7 @@ public class Invitation implements Serializable {
 
 	/**
 	 * Set the given account type
-	 * @param type Account type
+	 * @param accountType Account type
 	 */
 	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;

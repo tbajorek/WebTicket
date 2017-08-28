@@ -1,0 +1,9 @@
+/* Styles of department elements */
+.departments button {
+    margin-bottom: 10px;
+}
+
+.department-information {
+    background-color: #ddd;
+    padding: 10px;
+}
