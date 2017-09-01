@@ -9,14 +9,14 @@ import LoggedMenu from './user/LoggedMenu';
 /**
  * Component of user menu
  */
-class UserMenu extends Reflux.Component {
-    render() {
-        if (this.props.isLogged) {
-            return (<LoggedMenu user={this.props.user}/>);
-        } else {
-            return (<GuestMenu />);
-        }
+const UserMenu = (props) => {
+    "use strict";
+    const {user, isLogged} = props;
+    if (isLogged) {
+        return (<LoggedMenu user={user}/>);
+    } else {
+        return (<GuestMenu />);
     }
-}
+};
 
 export default UserMenu;

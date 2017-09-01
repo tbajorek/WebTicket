@@ -20,7 +20,6 @@ const LoggedMenu = ({user}) => (
             </LinkContainer>
             <MenuItem onClick={AuthActions.logout}>Wyloguj</MenuItem>
         </NavDropdown>
-
     </Nav>
 );
 

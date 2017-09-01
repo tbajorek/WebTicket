@@ -1,152 +1,1772 @@
 {
-	"variables": [],
-	"info": {
-		"name": "Authorization",
-		"_postman_id": "c18c6a9d-517c-b73e-ccb5-dbe7ab4d6073",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
-	},
-	"item": [
+	"version": 1,
+	"collections": [
 		{
-			"name": "Incorrect login data",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
-							"",
-							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"Log in operation has been finished unsuccessful\"] = jsonData.response === 0;",
-							"tests[\"Correct error login message - incorrect data\"] = jsonData.messages.error[0] === \"Podałeś błędne dane logowania\";"
-						]
-					}
-				}
+			"id": "3e62f9ca-69e3-340a-0f9f-d11ec85a617f",
+			"name": "9. Logout",
+			"description": "",
+			"order": [
+				"5567f16c-6674-daa2-327f-7e0d7613fe76",
+				"e940a41d-a403-34f0-eac8-b9467bc9c93a"
 			],
-			"request": {
-				"url": "http://localhost:9080/WebTicket/api/auth",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"badPassword\"\n}"
+			"folders": [],
+			"folders_order": [],
+			"timestamp": 1500416415138,
+			"synced": false,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1500416415138,
+			"updatedAt": 1504218710990,
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "5567f16c-6674-daa2-327f-7e0d7613fe76",
+					"headers": "X-Token: blabla\n",
+					"headerData": [
+						{
+							"key": "X-Token",
+							"value": "blabla",
+							"description": "Bad token",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/auth",
+					"queryParams": [],
+					"preRequestScript": null,
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "DELETE",
+					"data": null,
+					"dataMode": "params",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished unsuccessful\"] = jsonData.response === 0;\ntests[\"Correct error login message - incorrect data\"] = jsonData.messages.error[0] === \"Nie masz dostępu do tego zasobu\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1499822869385,
+					"name": "Incorrect token - unauthorized",
+					"description": "",
+					"collectionId": "3e62f9ca-69e3-340a-0f9f-d11ec85a617f",
+					"responses": [],
+					"isFromCollection": true,
+					"collectionRequestId": "df3b3568-d351-8098-ac05-aa476ba688fd",
+					"owner": "536092",
+					"collection": "3e62f9ca-69e3-340a-0f9f-d11ec85a617f"
 				},
-				"description": ""
-			},
-			"response": []
+				{
+					"id": "e940a41d-a403-34f0-eac8-b9467bc9c93a",
+					"headers": "X-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "Authorize token",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/auth",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "DELETE",
+					"data": null,
+					"dataMode": "params",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log out operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Correct logout message\"] = jsonData.messages.success[0] === \"Zostałeś wylogowany pomyślnie\";\npostman.clearGlobalVariable(\"token\");",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1499822917895,
+					"name": "Positive logout",
+					"description": "",
+					"collectionId": "3e62f9ca-69e3-340a-0f9f-d11ec85a617f",
+					"responses": [],
+					"owner": "536092",
+					"collection": "3e62f9ca-69e3-340a-0f9f-d11ec85a617f"
+				}
+			]
 		},
 		{
-			"name": "Positive login",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
-							"",
-							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"User id is correct\"] = jsonData.data.userId === 1;",
-							"tests[\"Log in operation has been finished successful\"] = jsonData.response === 1;",
-							"tests[\"Correct login message\"] = jsonData.messages.success[0] === \"Zostałeś zalogowany pomyślnie\";",
-							"",
-							"postman.setGlobalVariable(\"token\", jsonData.data.token);"
-						]
-					}
-				}
+			"id": "c18c6a9d-517c-b73e-ccb5-dbe7ab4d6073",
+			"name": "1. Authorization",
+			"description": "",
+			"order": [
+				"84c746ca-5466-9c31-d330-1ebb2d4d814e",
+				"990b2310-9f83-dc3e-be2e-71f6c8c9a4c0"
 			],
-			"request": {
-				"url": "http://localhost:9080/WebTicket/api/auth",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"qwerty\"\n}"
+			"folders": [],
+			"timestamp": 1499819312705,
+			"synced": false,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1499819312705,
+			"updatedAt": 1500416454487,
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "84c746ca-5466-9c31-d330-1ebb2d4d814e",
+					"headers": "Content-Type: application/json\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/auth",
+					"queryParams": [],
+					"preRequestScript": null,
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"badPassword\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished unsuccessful\"] = jsonData.response === 0;\ntests[\"Correct error login message - incorrect data\"] = jsonData.messages.error[0] === \"Podałeś błędne dane logowania\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1499822859805,
+					"name": "Incorrect login data",
+					"description": "",
+					"collectionId": "c18c6a9d-517c-b73e-ccb5-dbe7ab4d6073",
+					"responses": []
 				},
-				"description": ""
-			},
-			"response": []
+				{
+					"id": "990b2310-9f83-dc3e-be2e-71f6c8c9a4c0",
+					"headers": "Content-Type: application/json\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/auth",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"qwerty\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"User id is correct\"] = jsonData.data.user.id === 1;\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Correct login message\"] = jsonData.messages.success[0] === \"Zostałeś zalogowany pomyślnie\";\n\npostman.setGlobalVariable(\"token\", jsonData.data.token);",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503705710227,
+					"name": "Positive login",
+					"description": "",
+					"collectionId": "c18c6a9d-517c-b73e-ccb5-dbe7ab4d6073",
+					"responses": []
+				}
+			]
 		},
 		{
-			"name": "Positive logout",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
-							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"Log out operation has been finished successful\"] = jsonData.response === 1;",
-							"tests[\"Correct logout message\"] = jsonData.messages.success[0] === \"Zostałeś wylogowany pomyślnie\";",
-							"postman.clearGlobalVariable(\"token\");"
-						]
-					}
-				}
+			"id": "6c2c32f6-568f-ef99-7165-e95dec8d3ed2",
+			"name": "7. Invitation",
+			"description": "",
+			"order": [
+				"e460b37f-0dab-6aa9-7526-3e86e1b48691",
+				"bdccee91-ad90-66b2-5551-e26e3491a1b5",
+				"5e57b8a8-adcf-f95d-67fc-c5ae914b5a96"
 			],
-			"request": {
-				"url": "http://localhost:9080/WebTicket/api/auth",
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "X-Token",
-						"value": "{{token}}",
-						"description": "Authorize token"
-					}
-				],
-				"body": {},
-				"description": ""
-			},
-			"response": []
+			"folders": [],
+			"folders_order": [],
+			"timestamp": 1502988273075,
+			"synced": false,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1502988273075,
+			"updatedAt": 1503466615987,
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "5e57b8a8-adcf-f95d-67fc-c5ae914b5a96",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/invitation/{{invitation}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "DELETE",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Remove operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Zaproszenie zostało usunięte\";\n\npostman.clearGlobalVariable(\"invitation\");",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503014331005,
+					"name": "Delete invitation positively",
+					"description": "",
+					"collectionId": "6c2c32f6-568f-ef99-7165-e95dec8d3ed2",
+					"responses": []
+				},
+				{
+					"id": "bdccee91-ad90-66b2-5551-e26e3491a1b5",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/invitation",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n\t\"email\": \"newtest@example.com\",\n\t\"position\": \"Test position\",\n\t\"department\": 1,\n\t\"accountType\": 1\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Add operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Zaproszenie zostało dodane\";\ntests[\"Id of new invitation is existed\"] = typeof jsonData.data.invitation.id !== 'undefined';\ntests[\"Hash of new invitation is existed\"] = typeof jsonData.data.invitation.hash !== 'undefined';\ntests[\"Email of new invitation is correct\"] = jsonData.data.invitation.email === 'newtest@example.com';\n\npostman.setGlobalVariable(\"invitation\", jsonData.data.invitation.id);",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503014194040,
+					"name": "Invite to a concrete department",
+					"description": "",
+					"collectionId": "6c2c32f6-568f-ef99-7165-e95dec8d3ed2",
+					"responses": []
+				},
+				{
+					"id": "e460b37f-0dab-6aa9-7526-3e86e1b48691",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/invitation/types",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "{\n\t\"email\": \"newtest@example.com\",\n\t\"position\": \"Test position\",\n\t\"department\": 1,\n\t\"accountType\": 1\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Role 'pracownik' available\"] = jsonData.data.types['pracownik'] === 1;\ntests[\"Role 'kierownik' available\"] = jsonData.data.types['kierownik'] === 2;\ntests[\"Role 'administrator' available\"] = jsonData.data.types['administrator'] === 3;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503536513538,
+					"name": "Get account type list",
+					"description": "",
+					"collectionId": "6c2c32f6-568f-ef99-7165-e95dec8d3ed2",
+					"responses": []
+				}
+			]
 		},
 		{
-			"name": "Incorrect token - unauthorized",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
-							"",
-							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"Log in operation has been finished unsuccessful\"] = jsonData.response === 0;",
-							"tests[\"Correct error login message - incorrect data\"] = jsonData.messages.error[0] === \"Nie masz dostępu do tego zasobu\";"
-						]
-					}
-				}
+			"id": "c3ab903c-7b2c-3e81-4fa5-666a0c64624c",
+			"name": "8. Add new  user",
+			"description": "",
+			"order": [
+				"e210af2c-a219-7315-b204-6d7521785a6e",
+				"6b08f2fe-e4c9-a6bf-aa27-e847d6cb9bad",
+				"3ff81df1-7690-9caa-d034-b7870a3cb33a"
 			],
-			"request": {
-				"url": "http://localhost:9080/WebTicket/api/auth",
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "X-Token",
-						"value": "blabla",
-						"description": "Bad token"
-					}
-				],
-				"body": {},
-				"description": ""
-			},
-			"response": []
+			"folders": [],
+			"folders_order": [],
+			"timestamp": 1503014346570,
+			"synced": false,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1503014346570,
+			"updatedAt": "2017-08-18T00:33:56.578Z",
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "3ff81df1-7690-9caa-d034-b7870a3cb33a",
+					"headers": "Content-Type: application/json\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/user/{{hinvitation}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n\t\"password\": \"qwe123\",\n\t\"name\": \"Bill\",\n\t\"surname\": \"Cosmos\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Register operation has been finished unsuccessful\"] = jsonData.response === 0;\ntests[\"Register error message\"] = jsonData.messages.error[0] === \"Nie znaleziono zaproszenia\";\n\npostman.clearGlobalVariable(\"hinvitation\");",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503016533954,
+					"name": "Register user when invitation is not exist",
+					"description": "",
+					"collectionId": "c3ab903c-7b2c-3e81-4fa5-666a0c64624c",
+					"responses": []
+				},
+				{
+					"id": "6b08f2fe-e4c9-a6bf-aa27-e847d6cb9bad",
+					"headers": "Content-Type: application/json\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/user/{{hinvitation}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n\t\"password\": \"qwe123\",\n\t\"name\": \"Bill\",\n\t\"surname\": \"Cosmos\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Register operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Użytkownik został zarejestrowany. Konto jest dostępne do logowania.\";\ntests[\"Id of new user is existed\"] = typeof jsonData.data.user.id !== 'undefined';\ntests[\"Email of new user is correct\"] = jsonData.data.user.email === 'newtest@example.com';\ntests[\"Rate of new user is correct\"] = jsonData.data.user.rate === 0;\ntests[\"Rate counter of new user is correct\"] = jsonData.data.user.rateCounter === 0;\ntests[\"Name of new user is correct\"] = jsonData.data.user.name === 'Bill';\ntests[\"Surname of new user is correct\"] = jsonData.data.user.surname === 'Cosmos';\ntests[\"Position of new user is correct\"] = jsonData.data.user.position === 'Test position';\ntests[\"Type of new user is correct\"] = jsonData.data.user.type.id === 1;\ntests[\"Department of new user is correct\"] = jsonData.data.user.department.id === 1;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503707276460,
+					"name": "Register user positively",
+					"description": "",
+					"collectionId": "c3ab903c-7b2c-3e81-4fa5-666a0c64624c",
+					"responses": []
+				},
+				{
+					"id": "e210af2c-a219-7315-b204-6d7521785a6e",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/invitation",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n\t\"email\": \"newtest@example.com\",\n\t\"position\": \"Test position\",\n\t\"department\": 1,\n\t\"accountType\": 1\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Add operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Zaproszenie zostało dodane\";\ntests[\"Id of new invitation is existed\"] = typeof jsonData.data.invitation.id !== 'undefined';\ntests[\"Hash of new invitation is existed\"] = typeof jsonData.data.invitation.hash !== 'undefined';\ntests[\"Email of new invitation is correct\"] = jsonData.data.invitation.email === 'newtest@example.com';\n\npostman.setGlobalVariable(\"hinvitation\", jsonData.data.invitation.hash);",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503707261205,
+					"name": "Invite user",
+					"description": "",
+					"collectionId": "c3ab903c-7b2c-3e81-4fa5-666a0c64624c",
+					"responses": []
+				}
+			]
+		},
+		{
+			"id": "209b47ae-3422-47bf-11ef-f1b49a663320",
+			"name": "2. User",
+			"description": "",
+			"order": [
+				"4124c397-6e24-73d3-7e5a-012ad02d0237",
+				"b5a19cf0-709d-2875-8906-3edfb2d53cb1",
+				"01e7afca-01f4-e406-eba9-8c9a2971bc31",
+				"68855e8e-340b-ae26-7ba8-4433a04dc8c0",
+				"f7cdc5b8-9663-f461-b8f7-41ade675135b"
+			],
+			"folders": [],
+			"timestamp": 1500416290341,
+			"synced": false,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1500416290341,
+			"updatedAt": 1500428926317,
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "01e7afca-01f4-e406-eba9-8c9a2971bc31",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/user/1/profile",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"name\": \"Oliver\",\n\t\"surname\": \"Twist\",\n\t\"email\": \"newadmin@example.com\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Correct change profile message\"] = jsonData.messages.success[0] === \"Twoje dane zostały zmienione\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1500425311478,
+					"name": "Change profile",
+					"description": "",
+					"collectionId": "209b47ae-3422-47bf-11ef-f1b49a663320",
+					"responses": []
+				},
+				{
+					"id": "4124c397-6e24-73d3-7e5a-012ad02d0237",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/user/1",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Name is correct\"] = jsonData.data.name === \"Jeff\";\ntests[\"Surname is correct\"] = jsonData.data.surname === \"Treater\";\ntests[\"Position is correct\"] = jsonData.data.position === \"kierownik biura\";\ntests[\"Email is correct\"] = jsonData.data.email === \"admin@example.com\";\ntests[\"Department id is correct\"] = jsonData.data.department.id === 1;\ntests[\"Department name is correct\"] = jsonData.data.department.name === \"Management\";\ntests[\"Rate is correct\"] = jsonData.data.rate === 4.3;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1500422612361,
+					"name": "View user",
+					"description": "",
+					"collectionId": "209b47ae-3422-47bf-11ef-f1b49a663320",
+					"responses": []
+				},
+				{
+					"id": "68855e8e-340b-ae26-7ba8-4433a04dc8c0",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/user/1/department",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"id\": 2\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1500428976519,
+					"name": "Change department",
+					"description": "",
+					"collectionId": "209b47ae-3422-47bf-11ef-f1b49a663320",
+					"responses": []
+				},
+				{
+					"id": "b5a19cf0-709d-2875-8906-3edfb2d53cb1",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/user/1/password",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"oldPassword\": \"qwerty\",\n\t\"newPassword\": \"123456\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Correct change password message\"] = jsonData.messages.success[0] === \"Twoje hasło zostało zmienione\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1500425219708,
+					"name": "New password",
+					"description": "",
+					"collectionId": "209b47ae-3422-47bf-11ef-f1b49a663320",
+					"responses": []
+				},
+				{
+					"id": "f7cdc5b8-9663-f461-b8f7-41ade675135b",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/user/1/position",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"position\": \"PHP developer\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1500428982264,
+					"name": "Change position",
+					"description": "",
+					"collectionId": "209b47ae-3422-47bf-11ef-f1b49a663320",
+					"responses": []
+				}
+			]
+		},
+		{
+			"id": "576e8e01-b460-1471-959e-31fa69afa7be",
+			"name": "5. Milestone",
+			"description": "",
+			"order": [
+				"c6200add-dd4c-0b58-cfdd-3b790bc901c7",
+				"6c64af9a-1204-9d93-a57b-a82738c0b5a5",
+				"028789fa-9c55-ec4c-7d75-a8fe4bbc1160",
+				"d28d3c4d-bf8e-c6a6-a260-f825f413aa59"
+			],
+			"folders": [],
+			"timestamp": 1501459979138,
+			"synced": true,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1501459979138,
+			"updatedAt": 1501459989184,
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "028789fa-9c55-ec4c-7d75-a8fe4bbc1160",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/milestone/{{milestone}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"name\": \"Nowy krok milowy\",\n\t\"done\": true\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Change operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Krok milowy został zmieniony\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501461061663,
+					"name": "Change milestone",
+					"description": "",
+					"collectionId": "576e8e01-b460-1471-959e-31fa69afa7be",
+					"responses": []
+				},
+				{
+					"id": "6c64af9a-1204-9d93-a57b-a82738c0b5a5",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/milestone",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n\t\"ticket\": 1,\n\t\"name\": \"Krok milowy\",\n\t\"done\": false\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Add operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Krok milowy został zapisany\";\ntests[\"Id of new message is existed\"] = typeof jsonData.data.id !== 'undefined';\n\npostman.setGlobalVariable(\"milestone\", jsonData.data.id);",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501461055719,
+					"name": "Create new milestone",
+					"description": "",
+					"collectionId": "576e8e01-b460-1471-959e-31fa69afa7be",
+					"responses": []
+				},
+				{
+					"id": "c6200add-dd4c-0b58-cfdd-3b790bc901c7",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/milestone/1",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Id is correct\"] = jsonData.data.id === 1;\ntests[\"Done is correct\"] = jsonData.data.done === true;\ntests[\"Name is correct\"] = jsonData.data.name === \"Otworzyć szafkę\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501460597952,
+					"name": "View milestone",
+					"description": "",
+					"collectionId": "576e8e01-b460-1471-959e-31fa69afa7be",
+					"responses": []
+				},
+				{
+					"id": "d28d3c4d-bf8e-c6a6-a260-f825f413aa59",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/milestone/{{milestone}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "DELETE",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Remove operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Krok milowy został usunięty\";\n\npostman.clearGlobalVariable(\"milestone\");",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501460817488,
+					"name": "Delete milestone positively",
+					"description": "",
+					"collectionId": "576e8e01-b460-1471-959e-31fa69afa7be",
+					"responses": []
+				}
+			]
+		},
+		{
+			"id": "99c43351-733c-386e-3751-1c0c1dfd5586",
+			"name": "4. Message",
+			"description": "",
+			"order": [
+				"2dc42cbc-f932-528f-28a1-833bbef9e748",
+				"fd9f10ca-ffaf-e4d8-d03f-76eb8ff1b486",
+				"f0a98c25-f717-8993-c211-4b6afa872b37",
+				"44ad4b6e-85cf-6bb1-87f6-32b2f32a655e"
+			],
+			"folders": [],
+			"folders_order": [],
+			"timestamp": 1501349540946,
+			"synced": false,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1501349540946,
+			"updatedAt": 1501459803622,
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "2dc42cbc-f932-528f-28a1-833bbef9e748",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/message/1",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Author is correct\"] = jsonData.data.author.id === 1;\ntests[\"Created date is correct\"] = jsonData.data.created === 1500156000000;\ntests[\"Id is correct\"] = jsonData.data.id === 1;\ntests[\"Content is correct\"] = jsonData.data.content === \"Testowy content 1\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501349733158,
+					"name": "View message",
+					"description": "",
+					"collectionId": "99c43351-733c-386e-3751-1c0c1dfd5586",
+					"responses": []
+				},
+				{
+					"id": "44ad4b6e-85cf-6bb1-87f6-32b2f32a655e",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/message/{{message}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "DELETE",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Remove operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Wiadomość została usunięta\";\n\npostman.clearGlobalVariable(\"message\");",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501459968083,
+					"name": "Delete message positively",
+					"description": "",
+					"collectionId": "99c43351-733c-386e-3751-1c0c1dfd5586",
+					"responses": []
+				},
+				{
+					"id": "f0a98c25-f717-8993-c211-4b6afa872b37",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/message/{{message}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"content\": \"To jest nowa wiadomość. Mam nadzieję, że wszystko działa.\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Change operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Wiadomość została zmieniona\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501458688032,
+					"name": "Change message",
+					"description": "",
+					"collectionId": "99c43351-733c-386e-3751-1c0c1dfd5586",
+					"responses": []
+				},
+				{
+					"id": "fd9f10ca-ffaf-e4d8-d03f-76eb8ff1b486",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/message",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n\t\"ticket\": 1,\n\t\"content\": \"To jest testowa wiadomość. Mam nadzieję, że wszystko działa.\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Add operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Wiadomość została zapisana\";\ntests[\"Id of new message is existed\"] = typeof jsonData.data.id !== 'undefined';\n\npostman.setGlobalVariable(\"message\", jsonData.data.id);",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501458601662,
+					"name": "Create new message",
+					"description": "",
+					"collectionId": "99c43351-733c-386e-3751-1c0c1dfd5586",
+					"responses": []
+				}
+			]
+		},
+		{
+			"id": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+			"name": "6. Department",
+			"description": "",
+			"order": [
+				"0729a81f-83e8-d4b2-493d-8f94a37fdedf",
+				"ca1e7463-07fd-3c0b-5a71-a7467f6e3a5e",
+				"db818a6c-76fe-2131-9f36-e390ec3acfdf",
+				"ab66528d-24cc-81cb-f13b-7d2ce36473b4",
+				"2d44c248-f915-6d5d-cdb7-29ad9543bba0",
+				"3ec7f16b-b93f-88ab-6bee-77e9b229c533",
+				"60017d19-c725-ffe7-3719-7cb40e37692d",
+				"70b52446-619b-4d3d-246a-1e49735427b0"
+			],
+			"folders": [],
+			"folders_order": [],
+			"timestamp": 1501249561525,
+			"synced": false,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1501249561525,
+			"updatedAt": 1503620801817,
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "0729a81f-83e8-d4b2-493d-8f94a37fdedf",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/department/1",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Identifier is correct\"] = jsonData.data.id === 1;\ntests[\"Namer is correct\"] = jsonData.data.name === 'Management';",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503620939732,
+					"name": "Get details of department",
+					"description": "",
+					"collectionId": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+					"responses": []
+				},
+				{
+					"id": "2d44c248-f915-6d5d-cdb7-29ad9543bba0",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/department/1/users",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Users list is not empty\"] = jsonData.data.users.length === 1;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1502980824646,
+					"name": "Get users for department",
+					"description": "",
+					"collectionId": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+					"responses": []
+				},
+				{
+					"id": "3ec7f16b-b93f-88ab-6bee-77e9b229c533",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/department",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n\t\"name\": \"Lunch bar\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Add operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Nowy departament został dodany\";\ntests[\"Id of new message is existed\"] = typeof jsonData.data.id !== 'undefined';\ntests[\"Id of new message is existed\"] = jsonData.data.name === 'Lunch bar';\n\npostman.setGlobalVariable(\"department\", jsonData.data.id);",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503723139920,
+					"name": "Create new department",
+					"description": "",
+					"collectionId": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+					"responses": []
+				},
+				{
+					"id": "60017d19-c725-ffe7-3719-7cb40e37692d",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/department/{{department}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"name\": \"Kitchen\"\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Change operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Nazwa departamentu została zmieniona\";\ntest[\"New name is correct\"] = jsonData.data.name === 'Kitchen';",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1502981230801,
+					"name": "Change department name",
+					"description": "",
+					"collectionId": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+					"responses": []
+				},
+				{
+					"id": "70b52446-619b-4d3d-246a-1e49735427b0",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/department/{{department}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "DELETE",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Remove operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Departament został usunięty\";\n\npostman.clearGlobalVariable(\"department\");",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1502981413835,
+					"name": "Delete department positively",
+					"description": "",
+					"collectionId": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+					"responses": []
+				},
+				{
+					"id": "ab66528d-24cc-81cb-f13b-7d2ce36473b4",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/department",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Departments list is not empty\"] = jsonData.data.departments.length === 2;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1502980635678,
+					"name": "Get all departments",
+					"description": "",
+					"collectionId": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+					"responses": []
+				},
+				{
+					"id": "ca1e7463-07fd-3c0b-5a71-a7467f6e3a5e",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/department/1/tickets",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Ticket list is not empty\"] = jsonData.data.tickets.length > 1;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501251803964,
+					"name": "Get tickets for department",
+					"description": "",
+					"collectionId": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+					"responses": []
+				},
+				{
+					"id": "db818a6c-76fe-2131-9f36-e390ec3acfdf",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/department/1/invitations",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Invitation list is not empty\"] = jsonData.data.invitations.length === 2;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501337182136,
+					"name": "Get invitations for department",
+					"description": "",
+					"collectionId": "6cf5f221-07ee-71f0-fea5-4328476b799e",
+					"responses": []
+				}
+			]
+		},
+		{
+			"id": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+			"name": "3. Ticket",
+			"description": "",
+			"order": [
+				"ae47024a-a96f-8172-0ac2-0bf57af441c9",
+				"dcdf05ff-37c9-926b-fbb2-4a4700196840",
+				"016767c1-2e94-1f1c-1211-e7079bc0ba1c",
+				"a212bc73-e1dd-2221-4b6d-7ae7bdda46f0",
+				"460d2c26-f29c-55f7-d82f-a7ad28581958",
+				"2f7502f3-f168-522f-4ab2-a3eb8c93c11d",
+				"43ca6dc2-cc88-2c58-3bc9-273a3d37a1c2",
+				"2eea8366-8ec6-2cf6-24d1-9ec6548fee6f",
+				"839291e0-14b7-9e06-4e63-f9572d65b11d",
+				"11ab1c41-90d2-8792-e300-4b50a9ddbedf",
+				"84d92e86-3bd6-8511-e186-884ca768c7e0",
+				"d31ec1f1-e2f8-3f55-dd1b-b6e5be22bcb7",
+				"69e22d5e-36dd-72a3-2a45-8d022eda0dda"
+			],
+			"folders": [],
+			"timestamp": 1501202313035,
+			"synced": false,
+			"remote_id": 0,
+			"owner": "536092",
+			"sharedWithTeam": false,
+			"subscribed": false,
+			"remoteLink": "",
+			"remoteLinkUpdatedAt": null,
+			"public": false,
+			"createdAt": 1501202313035,
+			"updatedAt": 1501335393128,
+			"write": true,
+			"published": false,
+			"favorite": false,
+			"permissions": {},
+			"syncedPermissions": {},
+			"requests": [
+				{
+					"id": "016767c1-2e94-1f1c-1211-e7079bc0ba1c",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/available",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Display operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Tickets are found\"] = jsonData.data.tickets.length > 0;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501252144244,
+					"name": "Get available tickets",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "11ab1c41-90d2-8792-e300-4b50a9ddbedf",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/{{ticket}}/rate",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"rate\": 4\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Rate operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Zgłoszenie zostało ocenione\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501271527352,
+					"name": "Rate ticket",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "2eea8366-8ec6-2cf6-24d1-9ec6548fee6f",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/{{ticket}}/rate",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "{\n\t\"rate\": 4\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Rate operation has been finished unsuccessful\"] = jsonData.response === 0;\ntests[\"Success message\"] = jsonData.messages.error[0] === \"Nie możesz ocenić zgłoszenia, wciąż jest ono niezamknięte\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501271596612,
+					"name": "Impossible rate ticket before closing",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "2f7502f3-f168-522f-4ab2-a3eb8c93c11d",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/1000",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Searching operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Warning message\"] = jsonData.messages.warning[0] === \"Nie znaleziono zgłoszenia o id 1000\";\ntests[\"Empty results\"] = typeof jsonData.data.id === 'undefined';",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501250674145,
+					"name": "Ticket not exist",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "43ca6dc2-cc88-2c58-3bc9-273a3d37a1c2",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "POST",
+					"data": "{\n\t\"title\": \"Potrzebuję długopisu\",\n\t\"department\": 2\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Searching operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Nowe zgłoszenie zostało zapisane\";\ntests[\"Correct title\"] = jsonData.data.title === 'Potrzebuję długopisu';\ntests[\"Correct department\"] = jsonData.data.department.id === 2;\ntests[\"Correct new changes parameter\"] = jsonData.data.newChanges === true;\n\npostman.setGlobalVariable(\"ticket\", jsonData.data.id);",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501256205691,
+					"name": "Create new  ticket",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "460d2c26-f29c-55f7-d82f-a7ad28581958",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/my",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\n/*var jsonData = JSON.parse(responseBody);\ntests[\"Log in operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Name is correct\"] = jsonData.data.name === \"Jeff\";\ntests[\"Surname is correct\"] = jsonData.data.surname === \"Treater\";\ntests[\"Position is correct\"] = jsonData.data.position === \"kierownik biura\";\ntests[\"Email is correct\"] = jsonData.data.email === \"admin@example.com\";\ntests[\"Department id is correct\"] = jsonData.data.department.id === 1;\ntests[\"Department name is correct\"] = jsonData.data.department.name === \"Management\";\ntests[\"Rate is correct\"] = jsonData.data.rate === 4.3;*/",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501204559569,
+					"name": "Get empty list",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": [],
+					"isFromCollection": true,
+					"collectionRequestId": "ae47024a-a96f-8172-0ac2-0bf57af441c9"
+				},
+				{
+					"id": "69e22d5e-36dd-72a3-2a45-8d022eda0dda",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/1/milestones",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Display operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Messages are found\"] = jsonData.data.milestones.length === 3;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501335425168,
+					"name": "Get milestones for ticket",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "839291e0-14b7-9e06-4e63-f9572d65b11d",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/{{ticket}}/close",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "PUT",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Closing operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Zgłoszenie zostało zamknięte\";",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1503374278754,
+					"name": "Close ticket",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "84d92e86-3bd6-8511-e186-884ca768c7e0",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/{{ticket}}",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "DELETE",
+					"data": "{\n\t\"title\": \"Potrzebuję długopisu\",\n\t\"department\": 2\n}",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Remove operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Success message\"] = jsonData.messages.success[0] === \"Zgłoszenie zostało usunięte\";\npostman.clearGlobalVariable(\"ticket\");",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501459839612,
+					"name": "Delete ticket possitively",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "a212bc73-e1dd-2221-4b6d-7ae7bdda46f0",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/1",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"View operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Created date is correct\"] = jsonData.data.created === 1500156000000;\ntests[\"Author id is correct\"] = jsonData.data.author.id === 1;\ntests[\"Recipient id is correct\"] = jsonData.data.recipient.id === 2;\ntests[\"Id is correct\"] = jsonData.data.id === 1;\ntests[\"Title is correct\"] = jsonData.data.title === \"Brakujący element\";\ntests[\"New changes parameter is correct\"] = jsonData.data.newChanges === true;\ntests[\"Department is correct\"] = jsonData.data.department.id === 2;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501252069869,
+					"name": "View of ticket",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "ae47024a-a96f-8172-0ac2-0bf57af441c9",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/my",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Display operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Tickets are found\"] = jsonData.data.tickets.length > 0;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501252162421,
+					"name": "Get my list",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "d31ec1f1-e2f8-3f55-dd1b-b6e5be22bcb7",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/1/messages",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Display operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Messages are found\"] = jsonData.data.messages.length === 4;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501334383053,
+					"name": "Get messages for ticket",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				},
+				{
+					"id": "dcdf05ff-37c9-926b-fbb2-4a4700196840",
+					"headers": "Content-Type: application/json\nX-Token: {{token}}\n",
+					"headerData": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"enabled": true
+						},
+						{
+							"key": "X-Token",
+							"value": "{{token}}",
+							"description": "",
+							"enabled": true
+						}
+					],
+					"url": "http://localhost:9080/WebTicket/api/ticket/adopted",
+					"queryParams": [],
+					"preRequestScript": "",
+					"pathVariables": {},
+					"pathVariableData": [],
+					"method": "GET",
+					"data": "",
+					"dataMode": "raw",
+					"tests": "tests[\"Status code is 200\"] = responseCode.code === 200;\ntests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\n\nvar jsonData = JSON.parse(responseBody);\ntests[\"Display operation has been finished successful\"] = jsonData.response === 1;\ntests[\"Tickets are found\"] = jsonData.data.tickets.length > 0;",
+					"currentHelper": "normal",
+					"helperAttributes": {},
+					"time": 1501252149431,
+					"name": "Get adopted list",
+					"description": "",
+					"collectionId": "9b3391e5-55ee-7b63-3e6f-fb23e282b157",
+					"responses": []
+				}
+			]
+		}
+	],
+	"environments": [],
+	"headerPresets": [],
+	"globals": [
+		{
+			"key": "token",
+			"type": "text",
+			"value": "e84392bc3c93aa757f0a4351c6e1e9289f9a5c864cca2812447caed3d1fbded8",
+			"enabled": true
+		},
+		{
+			"key": "department",
+			"type": "text",
+			"value": "undefined",
+			"enabled": true
 		}
 	]
 }

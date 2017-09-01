@@ -9,7 +9,7 @@ import { checkRole, MANAGER } from '../../tools/CheckRole';
  */
 const UserList = ({users, currentUser}) => {
     var tableList = [];
-    if (users.length > 0) {
+    if (typeof users !=='undefined' && users.length > 0) {
         var rateHeader = null;
         if(checkRole(currentUser, MANAGER)) {
             rateHeader = (<th>Ocena</th>);
@@ -17,7 +17,7 @@ const UserList = ({users, currentUser}) => {
         for (var i in users) {
             var rateField = null;
             if(checkRole(currentUser, MANAGER)) {
-                rateField = (<td>{users[i].rate}</td>);
+                rateField = (<td className="userRate">{users[i].rate}</td>);
             }
             tableList.push(
                 <tr key={i}>
@@ -30,19 +30,21 @@ const UserList = ({users, currentUser}) => {
                 </tr>
             );
         }
-        return (<Table striped bordered condensed hover>
-            <thead>
-            <tr>
-                <th>Imię i nazwisko</th>
-                <th>Departament</th>
-                <th>Stanowisko</th>
-                { rateHeader }
-            </tr>
-            </thead>
-            <tbody>
-            { tableList }
-            </tbody>
-        </Table>);
+        return (
+            <Table striped bordered condensed hover>
+                <thead>
+                <tr>
+                    <th>Imię i nazwisko</th>
+                    <th>Departament</th>
+                    <th>Stanowisko</th>
+                    { rateHeader }
+                </tr>
+                </thead>
+                <tbody>
+                { tableList }
+                </tbody>
+            </Table>
+        );
     } else {
         return null;
     }
