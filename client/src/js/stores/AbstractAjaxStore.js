@@ -20,7 +20,7 @@ class AbstractAjaxStore extends Reflux.Store {
             method: method,
             url: endpoint,
             data: inputData,
-            timeout: 6000,
+            timeout: 20000,
             withCredentials: true,
             headers: {
                 'X-Token': token
